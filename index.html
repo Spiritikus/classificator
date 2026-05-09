@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Водородная классификация — точные правила</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            padding: 20px 16px;
+            color: #1e2a3a;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+            padding: 24px 28px 32px;
+        }
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin: 0 0 0.2rem 0;
+            color: #0b3b5f;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            background: #e9ecef;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: normal;
+            color: #2c3e50;
+        }
+        .rules {
+            background: #f0f9ff;
+            border-radius: 20px;
+            padding: 14px 22px;
+            margin: 16px 0 24px 0;
+            border-left: 5px solid #1e6f9f;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+        .rules span {
+            font-weight: 700;
+        }
+        .upload-area {
+            background: #f9fbfd;
+            border: 2px dashed #cbd5e1;
+            border-radius: 24px;
+            padding: 22px 20px;
+            text-align: center;
+            margin-bottom: 28px;
+            transition: 0.1s;
+        }
+        .upload-label {
+            background: #1e6f9f;
+            color: white;
+            padding: 10px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            transition: 0.2s;
+        }
+        .upload-label:hover {
+            background: #0e4b6e;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .info-tip {
+            font-size: 0.8rem;
+            color: #4a627a;
+            margin-top: 14px;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 22px;
+            background: #f1f5f9;
+            padding: 8px 20px;
+            border-radius: 60px;
+        }
+        .stats {
+            background: white;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        button {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 7px 22px;
+            border-radius: 32px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        button.primary-btn {
+            background: #1e6f9f;
+            border-color: #1e6f9f;
+            color: white;
+        }
+        button.primary-btn:hover {
+            background: #0e5a85;
+        }
+        button:hover {
+            background: #e2e8f0;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            background: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 620px;
+        }
+        th {
+            background: #1e293b;
+            color: white;
+            padding: 12px 12px;
+            font-weight: 600;
+        }
+        td {
+            border-bottom: 1px solid #e9edf2;
+            padding: 10px 12px;
+            vertical-align: top;
+        }
+        .class-select {
+            width: 80px;
+            border-radius: 30px;
+            padding: 6px 8px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+        }
+        .empty-msg {
+            padding: 48px;
+            text-align: center;
+            color: #6c86a3;
+        }
+        .footer-note {
+            margin-top: 28px;
+            font-size: 0.7rem;
+            text-align: center;
+            color: #7e95b0;
+            border-top: 1px solid #e2edf7;
+            padding-top: 20px;
+        }
+        .class-bg-1 { background: #d9eff740; }
+        .class-bg-2 { background: #e0f2e940; }
+        .class-bg-3 { background: #ffefcf40; }
+        .class-bg-4 { background: #fde2e240; }
+    </style>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>
+        ⚛️ Классификатор водородных вопросов 
+        <span class="badge">правила 1 · 2 · 3 · 4 · 0</span>
+    </h1>
+    <div class="rules">
+        📌 <span>1</span> – Химический элемент водород (электронное строение, изотопы, положение в ПС, нахождение в природе, распространённость)<br>
+        📌 <span>2</span> – Простое вещество H₂ (молекулярный водород, физические/химические свойства, реакции, получение, применение, хранение)<br>
+        📌 <span>3</span> – Степень окисления –1 (ионные гидриды, H⁻, гидриды металлов, солеобразные гидриды)<br>
+        📌 <span>4</span> – Степень окисления +1 (протон, кислоты, водородная связь, гидрогенат-комплексы, ион H₃O⁺)<br>
+        📌 <span>0</span> – Все остальные вопросы (не о водороде или не подпадающие под 1-4)
+    </div>
+
+    <div class="upload-area">
+        <label class="upload-label" for="excelInput">📂 Загрузить Excel (.xlsx, .xls)</label>
+        <input type="file" id="excelInput" accept=".xlsx, .xls">
+        <div class="info-tip">✔️ Файл должен содержать столбцы: «Номер вопроса» и «Текст вопроса». Первый лист, автоматическая классификация.</div>
+    </div>
+
+    <div class="toolbar">
+        <div class="stats" id="statsPanel">📄 Нет данных</div>
+        <div>
+            <button id="downloadBtn" disabled>💾 Скачать XLSX</button>
+            <button id="clearBtn" disabled>🗑 Очистить</button>
+        </div>
+    </div>
+
+    <div class="table-wrapper" id="tableContainer">
+        <table id="resultTable" style="display: none;">
+            <thead><tr><th>№</th><th>Текст вопроса</th><th>Класс</th></tr></thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <div id="emptyMessage" class="empty-msg">⚡ Загрузите Excel-файл для классификации вопросов</div>
+    </div>
+    <div class="footer-note">
+        🔍 Классификация выполняется по содержанию вопроса (не по вариантам ответа). Вы можете вручную изменить класс в выпадающем списке. 
+        После редактирования — скачать результат в Excel.
+    </div>
+</div>
+
+<script>
+    // -------- ПРАВИЛА КЛАССИФИКАЦИИ (оригинальные, точные) --------
+    // Класс 1 — химический элемент водород (нахождение в природе, электронное строение, изотопы, положение в ПС)
+    const class1Rules = [
+        /электронн(?:ая|ой|ую)\s*конфигурац/i, /атом\s+водород/ i, /строени[ее]\s+атом[ае]\s+водород/i,
+        /изотоп[ыа]\s+водород/i, /протий/i, /дейтерий/i, /тритий/i, /положени[ее]\s+водород[ае]\s+в\s+периодич/i,
+        /периодическ(?:ая|ой)\s+систем[ау]/i, /групп[еу]\s+периодическ/i, /спектры\s+водород/i, /энерги[яю]\s+ионизац/i,
+        /распространенн(?:ость|ая|ого)\s+водород/i, /содержани[ее]\s+водород[ае]/i, /кларк\s+водород/i, /водород\s+в\s+космос/i,
+        /солнечн(?:ая|ой)\s+атмосфер/i, /ядро\s+атом[ае]\s+водород/i, /нейтрон\s+в\s+ядре/i, /протон.*водород/i,
+        /изотопн(?:ый|ого)\s+состав/i, /радиоактивн.*тритий/i, /период\s+полураспад[ае]\s+трити/i, /тяжел(?:ая|ой)\s+вод[аы]/i,
+        /массов(?:ое|ого)\s+число/i, /первая\s+групп[ае]/i, /седьмая\s+групп[ае]/i, /положени[ее]\s+водород[ае]\s+условн/i,
+        /водород\s+в\s+таблиц[еу]\s+менделе/i, /электронн(?:ая|ой)\s+оболочк/i, /n=1/i, /1s¹/i, /энергетич(?:еск(?:ий|ую)|еские)\s+уровни/i
+    ];
+
+    // Класс 2 — простое вещество водород (H₂, его свойства, реакции, получение, применение)
+    const class2Rules = [
+        /\bH[₂2]\b(?!\d)/i, /молекул(?:ярн(?:ый|ого)|ярная)\s+водород/i, /диссоциац(?:ия|ию)\s+H2/i, /простое\s+веществ[оа]\s+водород/i,
+        /реакц(?:ия|ию)\s+водород[ае]\s+с/i, /взаимодейству(?:ет|ют)\s+водород/i, /восстанавлива(?:ет|ющ)/i, /окислител[ье].*водород/i,
+        /восстановител[ье].*водород/i, /получени[ея]\s+водород[ае]/i, /промышленн(?:ое|ого)\s+получ/i, /лабораторн(?:ый|ого)\s+способ/i,
+        /аппарат\s+Киппа/i, /электролиз\s+вод[ыа]/i, /конверси[яю]\s+метан/i, /паровой\s+риформинг/i, /водян(?:ой|ого)\s+газ/i,
+        /синтез-газ/i, /генераторн(?:ый|ого)\s+газ/i, /физическ(?:ие|их)\s+свойств[ае]\s+водород/i, /температур[ау]\s+плавлени[яе]/i,
+        /температур[ау]\s+кипени[яе]/i, /плотност[ьи]\s+водород[ае]/i, /растворимост[ьи]\s+водород[ае]/i, /горени[ее]\s+водород[ае]/i,
+        /сгорани[ее]\s+водород[ае]/i, /гремуч(?:ий|его)\s+газ/i, /топливн(?:ый|ого)\s+элемент/i, /водородн(?:ая|ой)\s+энергетик/i,
+        /хранени[ее]\s+водород[ае]/i, /жидк(?:ий|ого)\s+водород/i, /тв[её]рд(?:ый|ого)\s+водород/i, /ортоводород/i, /параводород/i,
+        /сварк[аи]\s+водород/i, /резк[аи]\s+водород/i, /гидрогенизаци[яю]/i, /гидрировани[ее]/i, /синтез\s+аммиак/i,
+        /синтез\s+метанол/i, /хлороводород[ае]\s+синтез/i, /кислородно-водородн/i, /диффузи[яю]\s+водород[ае]/i,
+        /восстановлени[ее]\s+оксид[ае]?\s+водород/i, /CuO\s*\+H2/i, /WO3\s*\+H2/i, /Fe2O3\s*\+H2/i, /PbO\s*\+H2/i,
+        /2Na\s*\+H2/i, /2H2\s*\+O2/i, /водород\s+выступает\s+как\s+восстановител/i, /атомарн(?:ый|ого)\s+водород/i,
+        /водород\s+в\s+момент\s+выделения/i, /молекулярн(?:ый|ого)\s+водород/i, /H2\s+реагиру/i
+    ];
+
+    // Класс 3 — водород в степени окисления -1 (ионные гидриды, H⁻)
+    const class3Rules = [
+        /H\s*[-–—]\s*\(?(?:ион|анион)\)?/i, /гидрид-ион/i, /ионн(?:ый|ого)\s+гидрид/i, /солеобразн(?:ый|ого)\s+гидрид/i,
+        /гидрид\s+натри[яю]/i, /гидрид\s+лити[яю]/i, /гидрид\s+кали[яю]/i, /гидрид\s+кальци[яю]/i, /\bCaH2\b/i, /\bLiH\b/i,
+        /\bNaH\b/i, /\bKH\b/i, /\bRbH\b/i, /\bCsH\b/i, /\bMgH2\b/i, /гидриды\s+щелочны[хз]\s+металл/i, /анион\s+H-/i,
+        /электролиз\s+расплав[ае]\s+гидрид/i, /потенциал\s+H2\/H-/i, /H-\s+восстановител/i, /гидрид\s+титан[ае]/i, /\bTiH2\b/i,
+        /\bZrH2\b/i, /гидриды\s+d-элементов/i, /металлоподобны[ех]\s+гидрид/i, /нестехиометрич(?:еск(?:ий|ого)|ную)\s+гидрид/i,
+        /гидрид\s+уран[ае]/i, /\bUH3\b/i, /интерметаллид.*водород/i, /обратим(?:ое|ого)\s+поглощени[ее]\s+водород/i,
+        /аккумулятор.*водород/i, /PdH/i, /гидрид\s+паллади/i, /гидрид\s+циркони/i, /MHx/i, /гидриды\s+переходн/i,
+        /гидрид-анион/i, /степень\s+окисления\s+-1/i, /H\s+минус/i, /отрицательн(?:ый|ого)\s+ион\s+водород/i
+    ];
+
+    // Класс 4 — водород в степени окисления +1 (кислоты, протон, водородная связь, гидрогенат-комплексы)
+    const class4Rules = [
+        /протон(?!\s+гидроксид)/i, /H\s*\+\s*(?:катион|ион)/i, /кислот[аы]/i, /водородн(?:ая|ой)\s+связ/i, /гидрогенат-комплекс/i,
+        /\bHF2-\b/i, /H3O\+/i, /сродств[оу]\s+к\s+протон/i, /ион\s+гидроксони[яю]/i, /оксони[йю]/i, /брёнстед/i,
+        /донор\s+протон/i, /акцептор\s+протон/i, /\bpH\b/, /оксокислот/i, /галогеноводород/i, /соединени[яе]\s+водород[ае]\(I\)/i,
+        /катион\s+H\+/i, /автопротолиз/i, /ионн(?:ое|ого)\s+произведени[ея]\s+вод/i, /диссоциаци[яю]\s+кислот/i,
+        /перенос\s+протон/i, /гидратаци[яю]\s+протон/i, /H5O2\+/i, /протонировани/i, /фторони[йю]/i, /H2F\+/i,
+        /кислотн(?:ые|ых)\s+свойств/i, /основн(?:ые|ых)\s+свойств/i, /амфотерн/i, /кислотно-основн/i, /водородн(?:ый|ого)\s+показател/i,
+        /бифторид/i, /KHF2/i, /гидродифторид/i, /F-H-F/i, /\[?F\.\.\.H\.\.\.F\]?-/i, /комплекс\s+с\s+HF2-/i,
+        /степень\s+окисления\s*\+1/i, /H\s+плюс/i, /положительн(?:ый|ого)\s+ион\s+водород/i
+    ];
+
+    function classifyQuestion(questionText) {
+        if (!questionText || questionText.trim() === "") return 0;
+        const text = questionText.toLowerCase();
+        // Приоритет: сначала специфические -3 / -4, потом 1 / 2, иначе 0
+        if (class3Rules.some(p => p.test(text))) return 3;
+        if (class4Rules.some(p => p.test(text))) return 4;
+        if (class1Rules.some(p => p.test(text))) return 1;
+        if (class2Rules.some(p => p.test(text))) return 2;
+        return 0;
+    }
+
+    let questionsData = [];   // { id, number, text, classValue }
+    let nextId = 1;
+
+    function parseExcelAndClassify(arrayBuffer) {
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: "" });
+        if (!rows || rows.length < 2) throw new Error("Недостаточно строк");
+
+        // найти столбцы с номером вопроса и текстом
+        let headerRowIndex = -1;
+        let colNumber = -1, colText = -1;
+        for (let i = 0; i < Math.min(6, rows.length); i++) {
+            const row = rows[i];
+            if (!row) continue;
+            for (let c = 0; c < row.length; c++) {
+                const cell = String(row[c] ?? "").toLowerCase();
+                if (/(?:номер|№|id|#)\s*вопрос/i.test(cell) || cell === "номер вопроса" || cell === "№") {
+                    colNumber = c; headerRowIndex = i;
+                }
+                if (/(?:текст\s*вопроса|вопрос|question\s*text)/i.test(cell)) {
+                    colText = c; headerRowIndex = i;
+                }
+            }
+            if (colNumber !== -1 && colText !== -1) break;
+        }
+        if (colNumber === -1 || colText === -1) {
+            // fallback: первый столбец — номер, второй — текст
+            if (rows[0] && rows[0].length >= 2) {
+                colNumber = 0; colText = 1; headerRowIndex = 0;
+            } else {
+                throw new Error("Не найдены столбцы 'Номер вопроса' и 'Текст вопроса'");
+            }
+        }
+
+        const items = [];
+        for (let i = headerRowIndex + 1; i < rows.length; i++) {
+            const row = rows[i];
+            if (!row || row.length === 0) continue;
+            let numRaw = row[colNumber];
+            let textRaw = row[colText];
+            if (textRaw === undefined || textRaw === null || String(textRaw).trim() === "") continue;
+            const number = (numRaw !== undefined && numRaw !== null && String(numRaw).trim() !== "") ? String(numRaw).trim() : String(i + 1);
+            const question = String(textRaw).trim();
+            const cls = classifyQuestion(question);
+            items.push({ id: nextId++, number: number, text: question, classValue: cls });
+        }
+        if (items.length === 0) throw new Error("В файле нет вопросов для анализа");
+        return items;
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById("tableBody");
+        const table = document.getElementById("resultTable");
+        const emptyDiv = document.getElementById("emptyMessage");
+        if (!questionsData.length) {
+            table.style.display = "none";
+            emptyDiv.style.display = "block";
+            document.getElementById("statsPanel").innerHTML = "📄 Нет данных";
+            document.getElementById("downloadBtn").disabled = true;
+            document.getElementById("clearBtn").disabled = true;
+            return;
+        }
+        table.style.display = "table";
+        emptyDiv.style.display = "none";
+        tbody.innerHTML = "";
+        let stats = {0:0,1:0,2:0,3:0,4:0};
+        questionsData.forEach((q, idx) => {
+            stats[q.classValue] = (stats[q.classValue] || 0) + 1;
+            const tr = document.createElement("tr");
+            tr.className = `class-bg-${q.classValue}`;
+            // номер
+            const tdNum = document.createElement("td");
+            tdNum.textContent = q.number;
+            tr.appendChild(tdNum);
+            // текст
+            const tdText = document.createElement("td");
+            tdText.textContent = q.text;
+            tdText.style.wordBreak = "break-word";
+            tr.appendChild(tdText);
+            // select для класса
+            const tdClass = document.createElement("td");
+            tdClass.style.textAlign = "center";
+            const select = document.createElement("select");
+            select.className = "class-select";
+            [0,1,2,3,4].forEach(v => {
+                const opt = document.createElement("option");
+                opt.value = v;
+                opt.textContent = v;
+                if (v === q.classValue) opt.selected = true;
+                select.appendChild(opt);
+            });
+            select.addEventListener("change", (e) => {
+                const newVal = parseInt(e.target.value, 10);
+                questionsData[idx].classValue = newVal;
+                renderTable();  // обновление статистики и цветов
+            });
+            tdClass.appendChild(select);
+            tr.appendChild(tdClass);
+            tbody.appendChild(tr);
+        });
+        document.getElementById("statsPanel").innerHTML = `📊 Всего: ${questionsData.length}  |  Класс 0: ${stats[0]}  |  ①: ${stats[1]}  |  ②: ${stats[2]}  |  ③: ${stats[3]}  |  ④: ${stats[4]}`;
+        document.getElementById("downloadBtn").disabled = false;
+        document.getElementById("clearBtn").disabled = false;
+    }
+
+    function downloadResult() {
+        if (!questionsData.length) return;
+        const sheetData = [["Номер вопроса", "Текст вопроса", "Класс (1=элемент,2=H₂,3=H⁻,4=H⁺,0=прочее)"]];
+        for (let q of questionsData) {
+            sheetData.push([q.number, q.text, q.classValue]);
+        }
+        const ws = XLSX.utils.aoa_to_sheet(sheetData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Классификация_водород");
+        XLSX.writeFile(wb, `hydrogen_classified_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`);
+    }
+
+    function clearAll() {
+        questionsData = [];
+        renderTable();
+        document.getElementById("excelInput").value = "";
+    }
+
+    // обработка файла
+    document.getElementById("excelInput").addEventListener("change", function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            try {
+                const data = evt.target.result;
+                const parsed = parseExcelAndClassify(data);
+                questionsData = parsed;
+                renderTable();
+            } catch (err) {
+                alert("Ошибка обработки: " + err.message);
+                clearAll();
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    document.getElementById("downloadBtn").addEventListener("click", downloadResult);
+    document.getElementById("clearBtn").addEventListener("click", clearAll);
+    clearAll();
+</script>
+</body>
+</html>
