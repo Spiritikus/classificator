@@ -3,655 +3,436 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Конвертер LaTeX вопросов в Excel | Поддержка \ce и формул</title>
+    <title>Водородная классификация — точные правила</title>
     <style>
         * {
             box-sizing: border-box;
         }
-
         body {
-            background: linear-gradient(135deg, #e9f0f5 0%, #dce6ef 100%);
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            background: #eef2f7;
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            padding: 20px 16px;
+            color: #1e2a3a;
         }
-
-        .card {
-            max-width: 1500px;
-            width: 100%;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
             background: white;
-            border-radius: 36px;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
-            overflow: hidden;
+            border-radius: 28px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+            padding: 24px 28px 32px;
         }
-
-        .header {
-            background: linear-gradient(135deg, #1e3c5c 0%, #2a4a6e 100%);
-            color: white;
-            padding: 1.8rem 2rem;
-        }
-
-        .header h1 {
-            margin: 0 0 0.3rem 0;
-            font-weight: 700;
+        h1 {
             font-size: 1.9rem;
-        }
-
-        .header p {
-            margin: 0;
-            opacity: 0.9;
-            font-size: 0.95rem;
-        }
-
-        .content {
-            padding: 2rem;
-        }
-
-        .input-methods {
-            display: flex;
-            gap: 1.8rem;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-        }
-
-        .method-card {
-            flex: 1;
-            min-width: 280px;
-            background: #f9fbfd;
-            border-radius: 24px;
-            padding: 1.3rem;
-            border: 1px solid #e2edf2;
-        }
-
-        .method-card h3 {
-            margin: 0 0 0.8rem 0;
-            font-size: 1.2rem;
-            color: #1e3c5c;
+            font-weight: 700;
+            margin: 0 0 0.2rem 0;
+            color: #0b3b5f;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            flex-wrap: wrap;
         }
-
-        .upload-area {
-            background: #ffffff;
-            border: 2px dashed #b9d0e7;
+        .badge {
+            background: #e9ecef;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: normal;
+            color: #2c3e50;
+        }
+        .rules {
+            background: #f0f9ff;
             border-radius: 20px;
-            padding: 1.2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-top: 0.5rem;
-        }
-
-        .upload-area:hover {
-            border-color: #1e3c5c;
-            background: #f1f7fd;
-        }
-
-        .upload-area input {
-            display: none;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 320px;
-            padding: 14px;
-            font-family: 'Courier New', 'Fira Code', monospace;
-            font-size: 0.82rem;
-            border: 1px solid #cbdde9;
-            border-radius: 18px;
-            background: #ffffff;
-            resize: vertical;
+            padding: 14px 22px;
+            margin: 16px 0 24px 0;
+            border-left: 5px solid #1e6f9f;
+            font-size: 0.92rem;
             line-height: 1.5;
         }
-
-        textarea:focus {
-            outline: none;
-            border-color: #1e3c5c;
-            box-shadow: 0 0 0 3px rgba(30,60,92,0.15);
+        .rules span {
+            font-weight: 700;
         }
-
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin: 1.5rem 0 1rem;
+        .upload-area {
+            background: #f9fbfd;
+            border: 2px dashed #cbd5e1;
+            border-radius: 24px;
+            padding: 22px 20px;
+            text-align: center;
+            margin-bottom: 28px;
+            transition: 0.1s;
         }
-
-        button {
-            background: #1e3c5c;
-            border: none;
+        .upload-label {
+            background: #1e6f9f;
             color: white;
+            padding: 10px 28px;
+            border-radius: 40px;
             font-weight: 600;
-            padding: 12px 28px;
-            border-radius: 44px;
-            font-size: 0.9rem;
+            font-size: 1rem;
             cursor: pointer;
-            transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            border: none;
+            transition: 0.2s;
         }
-
-        button:hover {
-            background: #0f2b44;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+        .upload-label:hover {
+            background: #0e4b6e;
         }
-
-        button.secondary {
-            background: #5a7d9c;
+        input[type="file"] {
+            display: none;
         }
-
-        button.success {
-            background: #2a7f6e;
+        .info-tip {
+            font-size: 0.8rem;
+            color: #4a627a;
+            margin-top: 14px;
         }
-
-        button.success:hover {
-            background: #1e5f52;
-        }
-
-        .status-msg {
-            background: #eef2f7;
-            border-radius: 40px;
-            padding: 12px 22px;
-            font-size: 0.9rem;
-            color: #1e3c5c;
-            margin: 16px 0;
-            border-left: 4px solid #2a7f6e;
-        }
-
-        .preview-section {
-            margin-top: 2rem;
-            border-top: 1px solid #e2edf2;
-            padding-top: 1.5rem;
-        }
-
-        .preview-title {
-            font-weight: 700;
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            color: #1e3c5c;
+        .toolbar {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
             flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 22px;
+            background: #f1f5f9;
+            padding: 8px 20px;
+            border-radius: 60px;
         }
-
+        .stats {
+            background: white;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        button {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 7px 22px;
+            border-radius: 32px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        button.primary-btn {
+            background: #1e6f9f;
+            border-color: #1e6f9f;
+            color: white;
+        }
+        button.primary-btn:hover {
+            background: #0e5a85;
+        }
+        button:hover {
+            background: #e2e8f0;
+        }
         .table-wrapper {
             overflow-x: auto;
             border-radius: 20px;
-            border: 1px solid #dce7ef;
+            border: 1px solid #e2e8f0;
             background: white;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
+            min-width: 620px;
         }
-
         th {
-            background: #eef3fc;
-            padding: 14px 12px;
-            text-align: center;
-            border-bottom: 2px solid #cbdde9;
-            color: #1e3c5c;
-            font-weight: 700;
-        }
-
-        td {
+            background: #1e293b;
+            color: white;
             padding: 12px 12px;
-            border-bottom: 1px solid #e2edf2;
+            font-weight: 600;
+        }
+        td {
+            border-bottom: 1px solid #e9edf2;
+            padding: 10px 12px;
             vertical-align: top;
         }
-
-        .correct-col {
-            background-color: #d4f5e8 !important;
-        }
-
-        footer {
-            background: #f0f4f9;
-            padding: 1rem 2rem;
-            font-size: 0.75rem;
-            color: #5e7e9e;
+        .class-select {
+            width: 80px;
+            border-radius: 30px;
+            padding: 6px 8px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-weight: 500;
             text-align: center;
-            border-top: 1px solid #dce7ef;
+            cursor: pointer;
         }
-
-        .example-hint {
+        .empty-msg {
+            padding: 48px;
+            text-align: center;
+            color: #6c86a3;
+        }
+        .footer-note {
+            margin-top: 28px;
             font-size: 0.7rem;
-            color: #5a7d9c;
-            margin-top: 8px;
+            text-align: center;
+            color: #7e95b0;
+            border-top: 1px solid #e2edf7;
+            padding-top: 20px;
         }
+        .class-bg-1 { background: #d9eff740; }
+        .class-bg-2 { background: #e0f2e940; }
+        .class-bg-3 { background: #ffefcf40; }
+        .class-bg-4 { background: #fde2e240; }
     </style>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-<div class="card">
-    <div class="header">
-        <h1>📊 LaTeX → Excel | Полная поддержка \ce и формул</h1>
-        <p>Корректно обрабатывает LaTeX-команды \ce{}, формулы, переносы строк. Каждый вариант ответа — в отдельную ячейку.</p>
+<div class="container">
+    <h1>
+        ⚛️ Классификатор водородных вопросов 
+        <span class="badge">правила 1 · 2 · 3 · 4 · 0</span>
+    </h1>
+    <div class="rules">
+        📌 <span>1</span> – Химический элемент водород (электронное строение, изотопы, положение в ПС, нахождение в природе, распространённость)<br>
+        📌 <span>2</span> – Простое вещество H₂ (молекулярный водород, физические/химические свойства, реакции, получение, применение, хранение)<br>
+        📌 <span>3</span> – Степень окисления –1 (ионные гидриды, H⁻, гидриды металлов, солеобразные гидриды)<br>
+        📌 <span>4</span> – Степень окисления +1 (протон, кислоты, водородная связь, гидрогенат-комплексы, ион H₃O⁺)<br>
+        📌 <span>0</span> – Все остальные вопросы (не о водороде или не подпадающие под 1-4)
     </div>
-    <div class="content">
-        <div class="input-methods">
-            <div class="method-card">
-                <h3>📁 Загрузить файл</h3>
-                <div class="upload-area" id="dropZone">
-                    <label for="fileInput" style="cursor: pointer; display: block;">
-                        📂 Нажмите или перетащите .txt / .tex
-                    </label>
-                    <input type="file" id="fileInput" accept=".txt, .tex, .text/plain">
-                </div>
-            </div>
-            <div class="method-card">
-                <h3>✏️ Вставить LaTeX</h3>
-                <textarea id="latexInput" placeholder='Пример с командами \ce (химические формулы):
 
-\question Какова электронная конфигурация атома водорода в основном состоянии?
-\begin{randomizechoices}
-    \correctchoice \ce{1s^1}
-    \choice \ce{1s^2}
-    \choice \ce{1s^2 2s^1}
-    \choice \ce{1s^2 2s^2 2p^1}
-\end{randomizechoices}
+    <div class="upload-area">
+        <label class="upload-label" for="excelInput">📂 Загрузить Excel (.xlsx, .xls)</label>
+        <input type="file" id="excelInput" accept=".xlsx, .xls">
+        <div class="info-tip">✔️ Файл должен содержать столбцы: «Номер вопроса» и «Текст вопроса». Первый лист, автоматическая классификация.</div>
+    </div>
 
-\question Сходство спектров водорода и щелочных металлов является аргументом для размещения водорода в...
-\begin{randomizechoices}
-    \correctchoice I группе периодической системы.
-    \choice VII группе периодической системы.
-    \choice VIII группе периодической системы.
-    \choice отдельно от всех групп.
-\end{randomizechoices}
-
-\question Энергия ионизации атома водорода по сравнению с атомами щелочных металлов...
-\begin{randomizechoices}
-    \correctchoice намного больше.
-    \choice примерно одинакова.
-    \choice намного меньше.
-    \choice не может быть сравнена.
-\end{randomizechoices}'></textarea>
-                <div class="example-hint">💡 Каждый вариант должен начинаться с \choice или \correctchoice на отдельной строке. Поддерживаются \ce{}, \mathrm{}, \text{} и любые другие LaTeX-команды.</div>
-            </div>
-        </div>
-
-        <div class="btn-group">
-            <button id="convertFromTextBtn">🔄 Конвертировать из текста</button>
-            <button id="clearAllBtn" class="secondary">🗑 Очистить всё</button>
-            <button id="exportExcelBtn" class="success" disabled>📎 Экспорт в Excel (XLSX)</button>
-        </div>
-
-        <div id="statusArea" class="status-msg">
-            💡 Вставьте LaTeX-код или загрузите файл, затем нажмите «Конвертировать из текста».
-        </div>
-
-        <div class="preview-section" id="previewArea" style="display: none;">
-            <div class="preview-title">
-                <span>📋 Предпросмотр (первые 5 вопросов)</span>
-                <span style="background: #e1ecf4; padding: 4px 14px; border-radius: 30px; font-size: 0.75rem;" id="questionsCountBadge"></span>
-            </div>
-            <div class="table-wrapper">
-                <div id="previewTable"></div>
-            </div>
+    <div class="toolbar">
+        <div class="stats" id="statsPanel">📄 Нет данных</div>
+        <div>
+            <button id="downloadBtn" disabled>💾 Скачать XLSX</button>
+            <button id="clearBtn" disabled>🗑 Очистить</button>
         </div>
     </div>
-    <footer>
-        ✅ <strong>Как работает:</strong> Каждая команда <code>\choice</code> или <code>\correctchoice</code> создаёт отдельную ячейку. Правильный ответ помещается в колонку A со звёздочкой *, остальные — в B, C, D.<br>
-        Поддерживаются многострочные варианты, LaTeX-команды, химические формулы \ce{} и любые спецсимволы.
-    </footer>
+
+    <div class="table-wrapper" id="tableContainer">
+        <table id="resultTable" style="display: none;">
+            <thead><tr><th>№</th><th>Текст вопроса</th><th>Класс</th></tr></thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <div id="emptyMessage" class="empty-msg">⚡ Загрузите Excel-файл для классификации вопросов</div>
+    </div>
+    <div class="footer-note">
+        🔍 Классификация выполняется по содержанию вопроса (не по вариантам ответа). Вы можете вручную изменить класс в выпадающем списке. 
+        После редактирования — скачать результат в Excel.
+    </div>
 </div>
 
-<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script>
-    let parsedQuestions = [];
+    // -------- ПРАВИЛА КЛАССИФИКАЦИИ (оригинальные, точные) --------
+    // Класс 1 — химический элемент водород (нахождение в природе, электронное строение, изотопы, положение в ПС)
+    const class1Rules = [
+        /электронн(?:ая|ой|ую)\s*конфигурац/i, /атом\s+водород/ i, /строени[ее]\s+атом[ае]\s+водород/i,
+        /изотоп[ыа]\s+водород/i, /протий/i, /дейтерий/i, /тритий/i, /положени[ее]\s+водород[ае]\s+в\s+периодич/i,
+        /периодическ(?:ая|ой)\s+систем[ау]/i, /групп[еу]\s+периодическ/i, /спектры\s+водород/i, /энерги[яю]\s+ионизац/i,
+        /распространенн(?:ость|ая|ого)\s+водород/i, /содержани[ее]\s+водород[ае]/i, /кларк\s+водород/i, /водород\s+в\s+космос/i,
+        /солнечн(?:ая|ой)\s+атмосфер/i, /ядро\s+атом[ае]\s+водород/i, /нейтрон\s+в\s+ядре/i, /протон.*водород/i,
+        /изотопн(?:ый|ого)\s+состав/i, /радиоактивн.*тритий/i, /период\s+полураспад[ае]\s+трити/i, /тяжел(?:ая|ой)\s+вод[аы]/i,
+        /массов(?:ое|ого)\s+число/i, /первая\s+групп[ае]/i, /седьмая\s+групп[ае]/i, /положени[ее]\s+водород[ае]\s+условн/i,
+        /водород\s+в\s+таблиц[еу]\s+менделе/i, /электронн(?:ая|ой)\s+оболочк/i, /n=1/i, /1s¹/i, /энергетич(?:еск(?:ий|ую)|еские)\s+уровни/i
+    ];
 
-    const fileInput = document.getElementById('fileInput');
-    const dropZone = document.getElementById('dropZone');
-    const latexTextarea = document.getElementById('latexInput');
-    const convertFromTextBtn = document.getElementById('convertFromTextBtn');
-    const clearAllBtn = document.getElementById('clearAllBtn');
-    const exportExcelBtn = document.getElementById('exportExcelBtn');
-    const statusArea = document.getElementById('statusArea');
-    const previewArea = document.getElementById('previewArea');
-    const previewTableDiv = document.getElementById('previewTable');
-    const questionsCountBadge = document.getElementById('questionsCountBadge');
+    // Класс 2 — простое вещество водород (H₂, его свойства, реакции, получение, применение)
+    const class2Rules = [
+        /\bH[₂2]\b(?!\d)/i, /молекул(?:ярн(?:ый|ого)|ярная)\s+водород/i, /диссоциац(?:ия|ию)\s+H2/i, /простое\s+веществ[оа]\s+водород/i,
+        /реакц(?:ия|ию)\s+водород[ае]\s+с/i, /взаимодейству(?:ет|ют)\s+водород/i, /восстанавлива(?:ет|ющ)/i, /окислител[ье].*водород/i,
+        /восстановител[ье].*водород/i, /получени[ея]\s+водород[ае]/i, /промышленн(?:ое|ого)\s+получ/i, /лабораторн(?:ый|ого)\s+способ/i,
+        /аппарат\s+Киппа/i, /электролиз\s+вод[ыа]/i, /конверси[яю]\s+метан/i, /паровой\s+риформинг/i, /водян(?:ой|ого)\s+газ/i,
+        /синтез-газ/i, /генераторн(?:ый|ого)\s+газ/i, /физическ(?:ие|их)\s+свойств[ае]\s+водород/i, /температур[ау]\s+плавлени[яе]/i,
+        /температур[ау]\s+кипени[яе]/i, /плотност[ьи]\s+водород[ае]/i, /растворимост[ьи]\s+водород[ае]/i, /горени[ее]\s+водород[ае]/i,
+        /сгорани[ее]\s+водород[ае]/i, /гремуч(?:ий|его)\s+газ/i, /топливн(?:ый|ого)\s+элемент/i, /водородн(?:ая|ой)\s+энергетик/i,
+        /хранени[ее]\s+водород[ае]/i, /жидк(?:ий|ого)\s+водород/i, /тв[её]рд(?:ый|ого)\s+водород/i, /ортоводород/i, /параводород/i,
+        /сварк[аи]\s+водород/i, /резк[аи]\s+водород/i, /гидрогенизаци[яю]/i, /гидрировани[ее]/i, /синтез\s+аммиак/i,
+        /синтез\s+метанол/i, /хлороводород[ае]\s+синтез/i, /кислородно-водородн/i, /диффузи[яю]\s+водород[ае]/i,
+        /восстановлени[ее]\s+оксид[ае]?\s+водород/i, /CuO\s*\+H2/i, /WO3\s*\+H2/i, /Fe2O3\s*\+H2/i, /PbO\s*\+H2/i,
+        /2Na\s*\+H2/i, /2H2\s*\+O2/i, /водород\s+выступает\s+как\s+восстановител/i, /атомарн(?:ый|ого)\s+водород/i,
+        /водород\s+в\s+момент\s+выделения/i, /молекулярн(?:ый|ого)\s+водород/i, /H2\s+реагиру/i
+    ];
 
-    // ============= РАСШИРЕННЫЙ ПАРСЕР С ПОДДЕРЖКОЙ \ce =============
-    function parseLatexQuestions(content) {
-        let text = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-        
-        // Находим все вопросы
-        const questionPattern = /\\question\s+([\s\S]*?)(?=\\question\s+|\n*$)/gi;
-        let matches = [];
-        let match;
-        while ((match = questionPattern.exec(text)) !== null) {
-            let block = match[1].trim();
-            if (block.length > 0) matches.push(block);
-        }
-        
-        if (matches.length === 0 && text.includes('\\question')) {
-            const parts = text.split(/\\question/);
-            for (let i = 1; i < parts.length; i++) {
-                if (parts[i].trim()) matches.push(parts[i].trim());
-            }
-        }
-        
-        if (matches.length === 0) {
-            throw new Error('Не найдено ни одного вопроса с командой \\question');
-        }
-        
-        const questions = [];
-        
-        for (let qIdx = 0; qIdx < matches.length; qIdx++) {
-            let block = matches[qIdx];
-            
-            // Извлекаем текст вопроса
-            let questionText = '';
-            let choicesBlock = '';
-            
-            const beginMatch = block.match(/\\begin\{(randomizechoices|choices)\}/);
-            if (beginMatch) {
-                const envName = beginMatch[1];
-                const beginTag = beginMatch[0];
-                const endTag = `\\end{${envName}}`;
-                const beginPos = block.indexOf(beginTag);
-                questionText = block.substring(0, beginPos).trim();
-                
-                const afterBegin = block.substring(beginPos + beginTag.length);
-                const endPos = afterBegin.indexOf(endTag);
-                if (endPos !== -1) {
-                    choicesBlock = afterBegin.substring(0, endPos).trim();
-                } else {
-                    choicesBlock = afterBegin;
+    // Класс 3 — водород в степени окисления -1 (ионные гидриды, H⁻)
+    const class3Rules = [
+        /H\s*[-–—]\s*\(?(?:ион|анион)\)?/i, /гидрид-ион/i, /ионн(?:ый|ого)\s+гидрид/i, /солеобразн(?:ый|ого)\s+гидрид/i,
+        /гидрид\s+натри[яю]/i, /гидрид\s+лити[яю]/i, /гидрид\s+кали[яю]/i, /гидрид\s+кальци[яю]/i, /\bCaH2\b/i, /\bLiH\b/i,
+        /\bNaH\b/i, /\bKH\b/i, /\bRbH\b/i, /\bCsH\b/i, /\bMgH2\b/i, /гидриды\s+щелочны[хз]\s+металл/i, /анион\s+H-/i,
+        /электролиз\s+расплав[ае]\s+гидрид/i, /потенциал\s+H2\/H-/i, /H-\s+восстановител/i, /гидрид\s+титан[ае]/i, /\bTiH2\b/i,
+        /\bZrH2\b/i, /гидриды\s+d-элементов/i, /металлоподобны[ех]\s+гидрид/i, /нестехиометрич(?:еск(?:ий|ого)|ную)\s+гидрид/i,
+        /гидрид\s+уран[ае]/i, /\bUH3\b/i, /интерметаллид.*водород/i, /обратим(?:ое|ого)\s+поглощени[ее]\s+водород/i,
+        /аккумулятор.*водород/i, /PdH/i, /гидрид\s+паллади/i, /гидрид\s+циркони/i, /MHx/i, /гидриды\s+переходн/i,
+        /гидрид-анион/i, /степень\s+окисления\s+-1/i, /H\s+минус/i, /отрицательн(?:ый|ого)\s+ион\s+водород/i
+    ];
+
+    // Класс 4 — водород в степени окисления +1 (кислоты, протон, водородная связь, гидрогенат-комплексы)
+    const class4Rules = [
+        /протон(?!\s+гидроксид)/i, /H\s*\+\s*(?:катион|ион)/i, /кислот[аы]/i, /водородн(?:ая|ой)\s+связ/i, /гидрогенат-комплекс/i,
+        /\bHF2-\b/i, /H3O\+/i, /сродств[оу]\s+к\s+протон/i, /ион\s+гидроксони[яю]/i, /оксони[йю]/i, /брёнстед/i,
+        /донор\s+протон/i, /акцептор\s+протон/i, /\bpH\b/, /оксокислот/i, /галогеноводород/i, /соединени[яе]\s+водород[ае]\(I\)/i,
+        /катион\s+H\+/i, /автопротолиз/i, /ионн(?:ое|ого)\s+произведени[ея]\s+вод/i, /диссоциаци[яю]\s+кислот/i,
+        /перенос\s+протон/i, /гидратаци[яю]\s+протон/i, /H5O2\+/i, /протонировани/i, /фторони[йю]/i, /H2F\+/i,
+        /кислотн(?:ые|ых)\s+свойств/i, /основн(?:ые|ых)\s+свойств/i, /амфотерн/i, /кислотно-основн/i, /водородн(?:ый|ого)\s+показател/i,
+        /бифторид/i, /KHF2/i, /гидродифторид/i, /F-H-F/i, /\[?F\.\.\.H\.\.\.F\]?-/i, /комплекс\s+с\s+HF2-/i,
+        /степень\s+окисления\s*\+1/i, /H\s+плюс/i, /положительн(?:ый|ого)\s+ион\s+водород/i
+    ];
+
+    function classifyQuestion(questionText) {
+        if (!questionText || questionText.trim() === "") return 0;
+        const text = questionText.toLowerCase();
+        // Приоритет: сначала специфические -3 / -4, потом 1 / 2, иначе 0
+        if (class3Rules.some(p => p.test(text))) return 3;
+        if (class4Rules.some(p => p.test(text))) return 4;
+        if (class1Rules.some(p => p.test(text))) return 1;
+        if (class2Rules.some(p => p.test(text))) return 2;
+        return 0;
+    }
+
+    let questionsData = [];   // { id, number, text, classValue }
+    let nextId = 1;
+
+    function parseExcelAndClassify(arrayBuffer) {
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: "" });
+        if (!rows || rows.length < 2) throw new Error("Недостаточно строк");
+
+        // найти столбцы с номером вопроса и текстом
+        let headerRowIndex = -1;
+        let colNumber = -1, colText = -1;
+        for (let i = 0; i < Math.min(6, rows.length); i++) {
+            const row = rows[i];
+            if (!row) continue;
+            for (let c = 0; c < row.length; c++) {
+                const cell = String(row[c] ?? "").toLowerCase();
+                if (/(?:номер|№|id|#)\s*вопрос/i.test(cell) || cell === "номер вопроса" || cell === "№") {
+                    colNumber = c; headerRowIndex = i;
                 }
+                if (/(?:текст\s*вопроса|вопрос|question\s*text)/i.test(cell)) {
+                    colText = c; headerRowIndex = i;
+                }
+            }
+            if (colNumber !== -1 && colText !== -1) break;
+        }
+        if (colNumber === -1 || colText === -1) {
+            // fallback: первый столбец — номер, второй — текст
+            if (rows[0] && rows[0].length >= 2) {
+                colNumber = 0; colText = 1; headerRowIndex = 0;
             } else {
-                questionText = block;
-                choicesBlock = block;
-            }
-            
-            // ========== РАЗДЕЛЕНИЕ ВАРИАНТОВ ==========
-            // Разбиваем choicesBlock на строки и обрабатываем каждую строку
-            const lines = choicesBlock.split(/\n/);
-            const rawChoices = [];
-            
-            for (let line of lines) {
-                line = line.trim();
-                if (line.startsWith('\\correctchoice')) {
-                    let content = line.replace(/\\correctchoice\s*/, '').trim();
-                    rawChoices.push({ text: content, isCorrect: true });
-                }
-                else if (line.startsWith('\\choice')) {
-                    let content = line.replace(/\\choice\s*/, '').trim();
-                    rawChoices.push({ text: content, isCorrect: false });
-                }
-            }
-            
-            // Если варианты не найдены построчно, пробуем искать в одной строке
-            if (rawChoices.length === 0 && choicesBlock.length > 0) {
-                // Ищем все вхождения \correctchoice и \choice через регулярку
-                const allChoiceRegex = /(\\(?:correct)?choice)\s+([^\n\\]*(?:\\[a-z]+\{[^}]*\}[^\n\\]*)*)/gi;
-                let cMatch;
-                while ((cMatch = allChoiceRegex.exec(choicesBlock)) !== null) {
-                    const cmd = cMatch[1];
-                    let content = cMatch[2] || '';
-                    content = content.trim();
-                    const isCorrect = cmd.includes('correct');
-                    if (content.length > 0) {
-                        rawChoices.push({ text: content, isCorrect: isCorrect });
-                    }
-                }
-            }
-            
-            // Собираем варианты: максимум 4, первый (правильный) в A со *
-            let choices = [];
-            let correctFound = false;
-            let correctChoice = null;
-            let otherChoices = [];
-            
-            for (let rc of rawChoices) {
-                if (rc.isCorrect && !correctFound) {
-                    correctChoice = rc;
-                    correctFound = true;
-                } else {
-                    otherChoices.push(rc);
-                }
-            }
-            
-            if (correctChoice) {
-                choices.push({ text: correctChoice.text, isCorrect: true });
-            }
-            
-            for (let i = 0; i < Math.min(otherChoices.length, 3); i++) {
-                choices.push({ text: otherChoices[i].text, isCorrect: false });
-            }
-            
-            // Дополняем до 4 вариантов пустыми
-            while (choices.length < 4) {
-                choices.push({ text: '', isCorrect: false });
-            }
-            
-            if (questionText && questionText.length > 0) {
-                questions.push({
-                    questionText: questionText,
-                    choices: choices
-                });
+                throw new Error("Не найдены столбцы 'Номер вопроса' и 'Текст вопроса'");
             }
         }
-        
-        if (questions.length === 0) {
-            throw new Error('Не удалось распарсить вопросы. Убедитесь, что каждый вариант начинается с \\choice или \\correctchoice на отдельной строке.');
+
+        const items = [];
+        for (let i = headerRowIndex + 1; i < rows.length; i++) {
+            const row = rows[i];
+            if (!row || row.length === 0) continue;
+            let numRaw = row[colNumber];
+            let textRaw = row[colText];
+            if (textRaw === undefined || textRaw === null || String(textRaw).trim() === "") continue;
+            const number = (numRaw !== undefined && numRaw !== null && String(numRaw).trim() !== "") ? String(numRaw).trim() : String(i + 1);
+            const question = String(textRaw).trim();
+            const cls = classifyQuestion(question);
+            items.push({ id: nextId++, number: number, text: question, classValue: cls });
         }
-        
-        return questions;
+        if (items.length === 0) throw new Error("В файле нет вопросов для анализа");
+        return items;
     }
-    
-    // Формирование строк для Excel
-    function questionsToRows(questions) {
-        const rows = [["Номер вопроса", "Текст вопроса", "Вариант A*", "Вариант B", "Вариант C", "Вариант D"]];
-        
-        for (let i = 0; i < questions.length; i++) {
-            const q = questions[i];
-            const qNumber = i + 1;
-            const questionBody = q.questionText;
-            
-            let optionCells = ["", "", "", ""];
-            
-            for (let optIdx = 0; optIdx < q.choices.length && optIdx < 4; optIdx++) {
-                const ch = q.choices[optIdx];
-                let displayText = ch.text;
-                if (ch.isCorrect && displayText && displayText.length > 0) {
-                    displayText = `*${displayText}`;
-                }
-                optionCells[optIdx] = displayText;
-            }
-            
-            rows.push([
-                qNumber.toString(),
-                questionBody,
-                optionCells[0],
-                optionCells[1],
-                optionCells[2],
-                optionCells[3]
-            ]);
-        }
-        return rows;
-    }
-    
-    function exportToExcel(questions) {
-        if (!questions || questions.length === 0) {
-            alert("Нет данных для экспорта.");
+
+    function renderTable() {
+        const tbody = document.getElementById("tableBody");
+        const table = document.getElementById("resultTable");
+        const emptyDiv = document.getElementById("emptyMessage");
+        if (!questionsData.length) {
+            table.style.display = "none";
+            emptyDiv.style.display = "block";
+            document.getElementById("statsPanel").innerHTML = "📄 Нет данных";
+            document.getElementById("downloadBtn").disabled = true;
+            document.getElementById("clearBtn").disabled = true;
             return;
         }
-        const rows = questionsToRows(questions);
-        const ws = XLSX.utils.aoa_to_sheet(rows);
-        ws['!cols'] = [{ wch: 8 }, { wch: 55 }, { wch: 45 }, { wch: 45 }, { wch: 45 }, { wch: 45 }];
+        table.style.display = "table";
+        emptyDiv.style.display = "none";
+        tbody.innerHTML = "";
+        let stats = {0:0,1:0,2:0,3:0,4:0};
+        questionsData.forEach((q, idx) => {
+            stats[q.classValue] = (stats[q.classValue] || 0) + 1;
+            const tr = document.createElement("tr");
+            tr.className = `class-bg-${q.classValue}`;
+            // номер
+            const tdNum = document.createElement("td");
+            tdNum.textContent = q.number;
+            tr.appendChild(tdNum);
+            // текст
+            const tdText = document.createElement("td");
+            tdText.textContent = q.text;
+            tdText.style.wordBreak = "break-word";
+            tr.appendChild(tdText);
+            // select для класса
+            const tdClass = document.createElement("td");
+            tdClass.style.textAlign = "center";
+            const select = document.createElement("select");
+            select.className = "class-select";
+            [0,1,2,3,4].forEach(v => {
+                const opt = document.createElement("option");
+                opt.value = v;
+                opt.textContent = v;
+                if (v === q.classValue) opt.selected = true;
+                select.appendChild(opt);
+            });
+            select.addEventListener("change", (e) => {
+                const newVal = parseInt(e.target.value, 10);
+                questionsData[idx].classValue = newVal;
+                renderTable();  // обновление статистики и цветов
+            });
+            tdClass.appendChild(select);
+            tr.appendChild(tdClass);
+            tbody.appendChild(tr);
+        });
+        document.getElementById("statsPanel").innerHTML = `📊 Всего: ${questionsData.length}  |  Класс 0: ${stats[0]}  |  ①: ${stats[1]}  |  ②: ${stats[2]}  |  ③: ${stats[3]}  |  ④: ${stats[4]}`;
+        document.getElementById("downloadBtn").disabled = false;
+        document.getElementById("clearBtn").disabled = false;
+    }
+
+    function downloadResult() {
+        if (!questionsData.length) return;
+        const sheetData = [["Номер вопроса", "Текст вопроса", "Класс (1=элемент,2=H₂,3=H⁻,4=H⁺,0=прочее)"]];
+        for (let q of questionsData) {
+            sheetData.push([q.number, q.text, q.classValue]);
+        }
+        const ws = XLSX.utils.aoa_to_sheet(sheetData);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Вопросы");
-        const fileName = `questions_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`;
-        XLSX.writeFile(wb, fileName);
-        statusArea.innerHTML = `✅ Экспорт выполнен! Скачан файл с ${questions.length} вопрос(ов).`;
-        return true;
+        XLSX.utils.book_append_sheet(wb, ws, "Классификация_водород");
+        XLSX.writeFile(wb, `hydrogen_classified_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`);
     }
-    
-    function renderPreview(questions) {
-        if (!questions || questions.length === 0) {
-            previewArea.style.display = "none";
-            return;
-        }
-        previewArea.style.display = "block";
-        questionsCountBadge.innerText = `Всего: ${questions.length}`;
-        
-        const allRows = questionsToRows(questions);
-        if (allRows.length <= 1) {
-            previewTableDiv.innerHTML = "<p>Нет данных для отображения</p>";
-            return;
-        }
-        
-        const maxShow = Math.min(allRows.length, 6);
-        const showRows = allRows.slice(0, maxShow);
-        
-        let html = '<table style="width:100%; border-collapse: collapse; font-size:13px;">\n<thead><tr>';
-        showRows[0].forEach(header => {
-            html += `<th style="padding:12px 10px; border:1px solid #cbdde9; background:#eef3fc; text-align:center;">${escapeHtml(header)}</th>`;
-        });
-        html += '</thead><tbody>';
-        
-        for (let r = 1; r < showRows.length; r++) {
-            html += '<tr>';
-            for (let c = 0; c < showRows[r].length; c++) {
-                let cellValue = showRows[r][c] || '';
-                let isCorrectCol = (c === 2);
-                let hasStar = typeof cellValue === 'string' && cellValue.startsWith('*');
-                let cellClass = (hasStar && isCorrectCol) ? 'correct-col' : '';
-                let displayValue = cellValue.length > 120 ? cellValue.substring(0, 120) + '…' : cellValue;
-                html += `<td style="padding:10px 8px; border:1px solid #e2edf2; vertical-align:top; white-space:pre-wrap;" class="${cellClass}">${escapeHtml(displayValue)}</td>`;
-            }
-            html += '</tr>';
-        }
-        html += '</tbody></table>';
-        
-        if (allRows.length - 1 > 5) {
-            html += `<div style="margin-top:12px; font-size:0.8rem; color:#2c5a7a;">+ ещё ${allRows.length - 1 - 5} вопрос(ов)</div>`;
-        }
-        previewTableDiv.innerHTML = html;
+
+    function clearAll() {
+        questionsData = [];
+        renderTable();
+        document.getElementById("excelInput").value = "";
     }
-    
-    function escapeHtml(str) {
-        if (!str) return '';
-        return String(str).replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-    
-    function convertFromText() {
-        const rawText = latexTextarea.value.trim();
-        if (!rawText) {
-            statusArea.innerHTML = "⚠️ Поле ввода пустое. Вставьте LaTeX-код с вопросами.";
-            return;
-        }
-        statusArea.innerHTML = "⏳ Парсинг...";
-        try {
-            const questions = parseLatexQuestions(rawText);
-            if (questions.length === 0) throw new Error("Нет вопросов после парсинга");
-            parsedQuestions = questions;
-            exportExcelBtn.disabled = false;
-            
-            let totalOpt = 0;
-            for (let q of questions) {
-                for (let c of q.choices) {
-                    if (c.text && c.text.length > 0) totalOpt++;
-                }
-            }
-            statusArea.innerHTML = `✅ Успешно: ${questions.length} вопрос(ов), ${totalOpt} вариантов. Правильный ответ (с \correctchoice) — в колонке A со *.`;
-            renderPreview(parsedQuestions);
-        } catch (err) {
-            console.error(err);
-            statusArea.innerHTML = `❌ Ошибка: ${err.message}`;
-            parsedQuestions = [];
-            exportExcelBtn.disabled = true;
-            previewArea.style.display = "none";
-        }
-    }
-    
-    function loadAndParseFile(file) {
+
+    // обработка файла
+    document.getElementById("excelInput").addEventListener("change", function(e) {
+        const file = e.target.files[0];
         if (!file) return;
-        statusArea.innerHTML = "⏳ Чтение файла...";
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function(evt) {
             try {
-                const content = e.target.result;
-                const questions = parseLatexQuestions(content);
-                parsedQuestions = questions;
-                if (parsedQuestions.length > 0) {
-                    exportExcelBtn.disabled = false;
-                    let totalOpt = 0;
-                    for (let q of parsedQuestions) {
-                        for (let c of q.choices) {
-                            if (c.text && c.text.length > 0) totalOpt++;
-                        }
-                    }
-                    statusArea.innerHTML = `✅ Файл загружен: ${parsedQuestions.length} вопрос(ов), ${totalOpt} вариантов. Каждый вариант в отдельной колонке.`;
-                    renderPreview(parsedQuestions);
-                    latexTextarea.value = content;
-                } else {
-                    throw new Error("Не удалось распарсить вопросы.");
-                }
+                const data = evt.target.result;
+                const parsed = parseExcelAndClassify(data);
+                questionsData = parsed;
+                renderTable();
             } catch (err) {
-                statusArea.innerHTML = `❌ Ошибка: ${err.message}. Убедитесь, что каждый вариант начинается с \\choice или \\correctchoice на новой строке.`;
-                parsedQuestions = [];
-                exportExcelBtn.disabled = true;
-                previewArea.style.display = "none";
+                alert("Ошибка обработки: " + err.message);
+                clearAll();
             }
         };
-        reader.onerror = () => statusArea.innerHTML = "❌ Ошибка чтения файла.";
-        reader.readAsText(file, "UTF-8");
-    }
-    
-    function clearAll() {
-        parsedQuestions = [];
-        exportExcelBtn.disabled = true;
-        previewArea.style.display = "none";
-        latexTextarea.value = "";
-        fileInput.value = "";
-        statusArea.innerHTML = "🧹 Очищено. Вставьте текст или загрузите файл, затем нажмите «Конвертировать из текста».";
-        previewTableDiv.innerHTML = "";
-    }
-    
-    convertFromTextBtn.addEventListener('click', convertFromText);
-    clearAllBtn.addEventListener('click', clearAll);
-    exportExcelBtn.addEventListener('click', () => {
-        if (parsedQuestions.length > 0) exportToExcel(parsedQuestions);
-        else alert("Нет данных для экспорта. Сначала сконвертируйте текст.");
+        reader.readAsArrayBuffer(file);
     });
-    
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.style.backgroundColor = "#eef4fc";
-    });
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.style.backgroundColor = "#ffffff";
-    });
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.style.backgroundColor = "#ffffff";
-        if (e.dataTransfer.files.length > 0) {
-            loadAndParseFile(e.dataTransfer.files[0]);
-        }
-    });
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files && fileInput.files[0]) {
-            loadAndParseFile(fileInput.files[0]);
-        }
-    });
-    
-    exportExcelBtn.disabled = true;
+
+    document.getElementById("downloadBtn").addEventListener("click", downloadResult);
+    document.getElementById("clearBtn").addEventListener("click", clearAll);
+    clearAll();
 </script>
 </body>
 </html>
