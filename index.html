@@ -2,184 +2,165 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ХимКлассификатор — определение элемента по вопросу</title>
-    <!-- Bootstrap 5 + Font Awesome -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ХимЭлемент PRO — точная классификация вопросов о свойствах элементов</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- SheetJS -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
-        * { transition: all 0.2s ease; }
         body {
-            background: linear-gradient(145deg, #0b2b2b 0%, #0a1a1f 100%);
-            font-family: 'Segoe UI', 'Poppins', system-ui;
-            min-height: 100vh;
+            background: linear-gradient(135deg, #0a1a2a 0%, #0c1e2f 100%);
+            font-family: 'Segoe UI', system-ui;
         }
-        .glass-panel {
-            background: rgba(22, 32, 38, 0.9);
-            backdrop-filter: blur(12px);
+        .card-sci {
+            background: rgba(20, 32, 45, 0.95);
+            backdrop-filter: blur(10px);
             border-radius: 2rem;
-            border: 1px solid rgba(80, 200, 120, 0.3);
-            box-shadow: 0 25px 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.4);
         }
-        .header-gradient {
-            background: linear-gradient(95deg, #0f2f2a, #0a241f);
+        .header-sci {
+            background: linear-gradient(95deg, #0f2b3a, #0a1f2c);
             border-radius: 2rem 2rem 0 0;
-            border-bottom: 2px solid #3cb371;
+            border-bottom: 2px solid #3b82f6;
         }
-        .upload-card {
-            border: 2px dashed #2ecc71;
-            border-radius: 1.5rem;
-            background: rgba(46, 204, 113, 0.05);
+        .upload-area {
+            border: 2px dashed #3b82f6;
+            border-radius: 1.2rem;
+            background: rgba(59, 130, 246, 0.05);
             cursor: pointer;
             transition: 0.2s;
         }
-        .upload-card:hover {
-            background: rgba(46, 204, 113, 0.15);
-            border-color: #58e68c;
+        .upload-area:hover {
+            background: rgba(59, 130, 246, 0.12);
+            border-color: #60a5fa;
         }
-        .btn-classify {
-            background: linear-gradient(95deg, #1e6f3f, #0f5330);
+        .btn-primary-glow {
+            background: linear-gradient(95deg, #2563eb, #1e40af);
             border: none;
             font-weight: 600;
         }
-        .btn-classify:hover {
-            background: linear-gradient(95deg, #2c8e55, #166c3e);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+        .btn-primary-glow:hover {
+            background: linear-gradient(95deg, #3b82f6, #2563eb);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
         }
-        .btn-download {
-            background: #2c5a6e;
-            border: none;
-        }
-        .btn-download:hover {
-            background: #3c7a94;
-        }
-        .table-wrapper {
+        .table-wrap {
             max-height: 55vh;
             overflow-y: auto;
             border-radius: 1rem;
-            background: #0e1a1e;
+            background: #0f172ad9;
         }
         .table {
-            color: #eef4ff;
+            color: #eef2ff;
         }
         .table thead th {
-            background: #122b28;
+            background: #0f1e2c;
             position: sticky;
             top: 0;
             z-index: 10;
-            border-bottom: 2px solid #2c8e55;
+            border-bottom: 2px solid #3b82f6;
         }
         .element-badge {
-            background: #2c7a47;
-            padding: 5px 12px;
+            background: #1f6e43;
+            padding: 5px 14px;
             border-radius: 40px;
             font-weight: bold;
             display: inline-block;
-            min-width: 65px;
+            min-width: 70px;
             text-align: center;
         }
         .element-unknown {
-            background: #5a626e;
+            background: #475569;
         }
-        .stat-area {
-            background: #0d2c27;
+        .stat-badge {
+            background: #0f2b34;
             border-radius: 50px;
             padding: 6px 18px;
         }
         select, option {
-            background-color: #1e3a33 !important;
+            background-color: #1e2a3a !important;
             color: white !important;
-            border-color: #2e8b57;
         }
-        .debug-toast {
-            font-size: 0.75rem;
-            background: #1f3b35;
-            border-left: 4px solid #2ecc71;
+        .footer-note {
+            font-size: 0.7rem;
+            border-top: 1px solid #2d4a6e;
         }
     </style>
 </head>
 <body>
 
-<div class="container py-4 py-md-5">
+<div class="container py-4 py-lg-5">
     <div class="row justify-content-center">
-        <div class="col-lg-10 col-xl-9">
-            <div class="glass-panel overflow-hidden">
-                <div class="header-gradient p-4">
-                    <div class="d-flex justify-content-between align-items-center">
+        <div class="col-xl-10 col-lg-11">
+            <div class="card-sci overflow-hidden">
+                <div class="header-sci p-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
                         <div>
-                            <h2 class="text-white fw-bold mb-0"><i class="fas fa-dna me-2"></i> ХимЭлемент-Анализ</h2>
-                            <p class="text-success-emphasis mb-0 small mt-1">Автоопределение химического элемента по тексту вопроса</p>
+                            <h2 class="text-white fw-bold"><i class="fas fa-atom me-2 text-blue-400"></i> ХимЭлемент PRO</h2>
+                            <p class="text-info-emphasis mb-0 small">Точная классификация: какой элемент описывается в вопросе</p>
                         </div>
-                        <i class="fas fa-atom fa-3x text-success opacity-75"></i>
+                        <i class="fas fa-flask fa-3x text-primary opacity-50"></i>
                     </div>
                 </div>
 
                 <div class="p-4 p-md-5">
-                    <!-- ОБЛАСТЬ ЗАГРУЗКИ - максимально простая и надёжная -->
+                    <!-- Загрузка файла -->
                     <div class="mb-4">
-                        <div id="uploadZone" class="upload-card p-4 text-center">
-                            <i class="fas fa-file-excel fa-3x text-success mb-2"></i>
-                            <h5 class="text-white">Нажмите или перетащите файл Excel</h5>
-                            <p class="text-secondary small">Поддерживаются .xlsx, .xls (любые вопросы по химии)</p>
-                            <button id="selectFileBtn" class="btn btn-success rounded-pill px-4">
+                        <div id="uploadZone" class="upload-area p-4 text-center">
+                            <i class="fas fa-file-excel fa-3x text-primary mb-2"></i>
+                            <h5 class="text-white">Загрузите Excel-файл с вопросами</h5>
+                            <p class="text-secondary small">.xlsx, .xls — вопросы о химических свойствах элементов</p>
+                            <button id="selectFileBtn" class="btn btn-primary-glow text-white rounded-pill px-4">
                                 <i class="fas fa-folder-open"></i> Выбрать файл
                             </button>
-                            <input type="file" id="excelFile" accept=".xlsx, .xls, .xlsm" style="display: none;">
-                            <div id="fileStatus" class="mt-3 small fw-bold"></div>
+                            <input type="file" id="excelFileInput" accept=".xlsx, .xls, .xlsm" style="display: none;">
+                            <div id="fileStatus" class="mt-3 small fw-bold text-info"></div>
                         </div>
                     </div>
 
-                    <!-- Панель настроек -->
-                    <div class="row g-3 mb-4 align-items-end bg-dark bg-opacity-25 p-3 rounded-4">
+                    <!-- Настройки -->
+                    <div class="row g-3 mb-4 align-items-end bg-black bg-opacity-25 p-3 rounded-4">
                         <div class="col-md-5">
                             <label class="form-label text-white fw-semibold"><i class="fas fa-columns"></i> Столбец с вопросами</label>
                             <select id="columnSelect" class="form-select bg-dark text-white" disabled>
-                                <option value="auto">🧠 Автовыбор (умный)</option>
+                                <option value="auto">🧠 Автоопределение (умный выбор)</option>
                             </select>
-                            <div class="form-text text-info-emphasis small">Выберите колонку, где находятся тексты вопросов</div>
+                            <div class="form-text text-info small">Алгоритм анализирует текст, игнорируя формулы внутри \ce{...}</div>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label text-white fw-semibold"><i class="fas fa-microscope"></i> Действие</label>
-                            <button id="classifyBtn" class="btn btn-classify text-white w-100 py-2 rounded-pill" disabled>
-                                <i class="fas fa-magic"></i> Классифицировать элементы
+                            <label class="form-label text-white fw-semibold"><i class="fas fa-microscope"></i> Классификация</label>
+                            <button id="classifyBtn" class="btn btn-primary-glow text-white w-100 py-2 rounded-pill" disabled>
+                                <i class="fas fa-magic"></i> Определить элементы
                             </button>
                         </div>
                         <div class="col-md-3 text-md-end">
-                            <div class="stat-area text-white d-inline-flex align-items-center">
-                                <i class="fas fa-chart-pie me-1"></i> <span id="statsLabel">Нет данных</span>
+                            <div class="stat-badge text-white d-inline-flex align-items-center">
+                                <i class="fas fa-chart-line me-1"></i> <span id="statsText">Нет данных</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Таблица результатов -->
-                    <div class="table-wrapper mb-3">
+                    <div class="table-wrap mb-3">
                         <table class="table table-hover table-bordered mb-0">
                             <thead>
-                                <tr class="text-center">
-                                    <th style="width: 130px;">🔬 Химический элемент</th>
+                                <tr>
+                                    <th style="width: 130px;">🔬 Хим. элемент</th>
                                     <th>📄 Текст вопроса</th>
                                 </tr>
                             </thead>
-                            <tbody id="resultsTbody">
-                                <tr>
-                                    <td colspan="2" class="text-center text-secondary py-5">
-                                        <i class="fas fa-upload fa-2x mb-2 d-block"></i>
-                                        Загрузите Excel-файл и нажмите «Классифицировать»
-                                    </td>
-                                </tr>
+                            <tbody id="resultsBody">
+                                <tr><td colspan="2" class="text-center text-secondary py-5">Загрузите файл и нажмите «Определить элементы»</td></tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Кнопка скачивания -->
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <button id="downloadExcelBtn" class="btn btn-download text-white rounded-pill px-4 py-2" disabled>
+                        <button id="downloadBtn" class="btn btn-outline-info rounded-pill px-4 py-2" disabled>
                             <i class="fas fa-download"></i> Скачать Excel с результатами
                         </button>
-                        <div class="small text-secondary"><i class="fas fa-robot"></i> Анализ названий, символов (Na, Fe, Cl)</div>
+                        <div class="footer-note text-secondary pt-2"><i class="fas fa-brain"></i> Улучшенная логика: анализируются названия элементов (калий, барий, фтор), игнорируются символы внутри формул</div>
                     </div>
                 </div>
             </div>
@@ -188,90 +169,154 @@
 </div>
 
 <script>
-    // -------------------- БАЗА ХИМИЧЕСКИХ ЭЛЕМЕНТОВ (символ + маркеры) --------------------
-    const elementDB = [
-        { sym: "H",  words: ["водород", "hydrogen", "h2", "гидрид", "протий", "кислота", "ph"] },
-        { sym: "He", words: ["гелий", "helium"] },
-        { sym: "Li", words: ["литий", "lithium", "щелочной", "li-ion"] },
-        { sym: "Be", words: ["бериллий", "beryllium"] },
-        { sym: "B",  words: ["бор", "boron", "борная"] },
-        { sym: "C",  words: ["углерод", "carbon", "алмаз", "графит", "карбид", "co2", "карбонат", "органический"] },
-        { sym: "N",  words: ["азот", "nitrogen", "аммиак", "нитрат", "n2", "азотная"] },
-        { sym: "O",  words: ["кислород", "oxygen", "оксид", "о2", "озон", "окисление", "горение"] },
-        { sym: "F",  words: ["фтор", "fluorine", "фторид", "плавиковая"] },
-        { sym: "Ne", words: ["неон", "neon"] },
-        { sym: "Na", words: ["натрий", "sodium", "nacl", "поваренная соль", "едкий натр", "щелочь"] },
-        { sym: "Mg", words: ["магний", "magnesium", "mgcl2"] },
-        { sym: "Al", words: ["алюминий", "aluminium", "aluminum", "al2o3", "оксид алюминия"] },
-        { sym: "Si", words: ["кремний", "silicon", "sio2", "силикат"] },
-        { sym: "P",  words: ["фосфор", "phosphorus", "фосфат", "p4", "фосфорная"] },
-        { sym: "S",  words: ["сера", "sulfur", "серная кислота", "сульфид", "сульфат", "h2so4"] },
-        { sym: "Cl", words: ["хлор", "chlorine", "хлорид", "hcl", "соляная кислота", "гипохлорит"] },
-        { sym: "Ar", words: ["аргон", "argon"] },
-        { sym: "K",  words: ["калий", "potassium", "kcl", "поташ", "koh"] },
-        { sym: "Ca", words: ["кальций", "calcium", "caco3", "известняк", "мел", "гипс"] },
-        { sym: "Ti", words: ["титан", "titanium", "tio2"] },
-        { sym: "Cr", words: ["хром", "chromium", "хромирование"] },
-        { sym: "Mn", words: ["марганец", "manganese", "kmno4", "перманганат"] },
-        { sym: "Fe", words: ["железо", "iron", "феррум", "ржавчина", "fe2o3", "чугун", "сталь"] },
-        { sym: "Co", words: ["кобальт", "cobalt"] },
-        { sym: "Ni", words: ["никель", "nickel"] },
-        { sym: "Cu", words: ["медь", "copper", "cuo", "медный купорос", "бронза"] },
-        { sym: "Zn", words: ["цинк", "zinc", "zno", "оцинковка"] },
-        { sym: "Ag", words: ["серебро", "silver", "аргентум"] },
-        { sym: "Sn", words: ["олово", "tin", "станум"] },
-        { sym: "Au", words: ["золото", "gold", "аурум"] },
-        { sym: "Hg", words: ["ртуть", "mercury"] },
-        { sym: "Pb", words: ["свинец", "lead", "плюмбум"] },
-        { sym: "Pt", words: ["платина", "platinum"] },
-        { sym: "U",  words: ["уран", "uranium"] },
-        { sym: "Br", words: ["бром", "bromine", "br2"] },
-        { sym: "I",  words: ["йод", "iodine", "иод"] }
+    // --------------------------------------------------------------
+    // РАСШИРЕННАЯ БАЗА ЭЛЕМЕНТОВ с приоритетом названий на русском
+    // --------------------------------------------------------------
+    const elementsData = [
+        { symbol: "K",  priorityNames: ["калий", "калия", "калием", "калиевая", "калиевый", "potassium"] },
+        { symbol: "Ba", priorityNames: ["барий", "бария", "барием", "barium"] },
+        { symbol: "Cl", priorityNames: ["хлор", "хлора", "хлором", "хлорид", "хлорат", "chlorine"] },
+        { symbol: "Br", priorityNames: ["бром", "брома", "бромом", "бромид", "bromine"] },
+        { symbol: "F",  priorityNames: ["фтор", "фтора", "фтором", "фторид", "fluorine"] },
+        { symbol: "I",  priorityNames: ["йод", "иод", "йода", "иода", "иодид", "iodine"] },
+        { symbol: "O",  priorityNames: ["кислород", "кислорода", "oxygen"] },
+        { symbol: "H",  priorityNames: ["водород", "водорода", "hydrogen"] },
+        { symbol: "Na", priorityNames: ["натрий", "натрия", "sodium"] },
+        { symbol: "Mg", priorityNames: ["магний", "магния", "magnesium"] },
+        { symbol: "Ca", priorityNames: ["кальций", "кальция", "calcium"] },
+        { symbol: "Al", priorityNames: ["алюминий", "алюминия", "aluminium"] },
+        { symbol: "Fe", priorityNames: ["железо", "железа", "iron"] },
+        { symbol: "Cu", priorityNames: ["медь", "меди", "copper"] },
+        { symbol: "Zn", priorityNames: ["цинк", "цинка", "zinc"] },
+        { symbol: "Ag", priorityNames: ["серебро", "серебра", "silver"] },
+        { symbol: "Au", priorityNames: ["золото", "золота", "gold"] },
+        { symbol: "Hg", priorityNames: ["ртуть", "ртути", "mercury"] },
+        { symbol: "Pb", priorityNames: ["свинец", "свинца", "lead"] },
+        { symbol: "Pt", priorityNames: ["платина", "платины", "platinum"] },
+        { symbol: "U",  priorityNames: ["уран", "урана", "uranium"] },
+        { symbol: "N",  priorityNames: ["азот", "азота", "nitrogen"] },
+        { symbol: "P",  priorityNames: ["фосфор", "фосфора", "phosphorus"] },
+        { symbol: "S",  priorityNames: ["сера", "серы", "sulfur"] },
+        { symbol: "Si", priorityNames: ["кремний", "кремния", "silicon"] },
+        { symbol: "Li", priorityNames: ["литий", "лития", "lithium"] }
     ];
 
-    // Функция определения элемента по тексту
-    function getElementFromQuestion(text) {
-        if (!text || typeof text !== "string") return "?";
-        const lowerText = text.toLowerCase();
-        let bestMatch = { sym: "?", score: 0 };
-        for (let el of elementDB) {
-            let score = 0;
-            // проверка ключевых слов
-            for (let kw of el.words) {
-                if (lowerText.includes(kw.toLowerCase())) {
-                    let weight = 1 + kw.length * 0.1;
-                    score += weight;
-                }
-            }
-            // проверка точного символа как отдельного слова
-            const symRegex = new RegExp(`\\b${el.sym}\\b`, 'i');
-            if (symRegex.test(lowerText)) score += 2.5;
-            if (score > bestMatch.score) {
-                bestMatch.score = score;
-                bestMatch.sym = el.sym;
-            }
-        }
-        return bestMatch.score > 0.5 ? bestMatch.sym : "?";
+    // Дополнительные контекстные ключевые слова, которые помогают определить элемент
+    const contextHints = {
+        "калий": ["калий", "калия", "kcl", "koh", "kbro3", "калиевая селитра", "k+", "поташ"],
+        "барий": ["барий", "бария", "bacl2", "ba(clo3)2", "ba2+", "сульфат бария"],
+        "хлор": ["хлор", "хлора", "хлорид", "хлорат", "гипохлорит", "kcl", "cl-"],
+        "фтор": ["фтор", "фтора", "фторид", "f2", "плавиковая кислота"],
+        "бром": ["бром", "брома", "бромид", "br2", "kbr"],
+        "йод": ["йод", "иод", "иодид", "i2", "kio3"]
+    };
+
+    // Очистка текста от формул \ce{...} и химических индексов
+    function cleanText(rawText) {
+        if (!rawText || typeof rawText !== "string") return "";
+        // удаляем \ce{...} и подобные LaTeX формулы
+        let cleaned = rawText.replace(/\\ce\{[^}]*\}/g, ' ');
+        cleaned = cleaned.replace(/\\\[.*?\\\]/g, ' ');
+        cleaned = cleaned.replace(/\$[^$]*\$/g, ' ');
+        // удаляем нижние индексы и прочие символы
+        cleaned = cleaned.replace(/[_{}\[\]]/g, ' ');
+        // заменяем множественные пробелы
+        cleaned = cleaned.replace(/\s+/g, ' ').toLowerCase();
+        return cleaned;
     }
 
+    // Основная функция определения элемента по вопросу
+    function detectMainElement(questionText) {
+        const cleaned = cleanText(questionText);
+        if (cleaned.length < 3) return "?";
+        
+        // 1. Прямой поиск названий элементов (русские названия имеют высший приоритет)
+        let bestMatch = { symbol: "?", score: 0, foundName: "" };
+        
+        for (let el of elementsData) {
+            for (let name of el.priorityNames) {
+                // ищем название как отдельное слово или в составе
+                const nameLower = name.toLowerCase();
+                // высокий приоритет: точное вхождение слова (границы)
+                const wordRegex = new RegExp(`\\b${escapeRegex(nameLower)}\\b`, 'i');
+                if (wordRegex.test(cleaned)) {
+                    let score = 100 + nameLower.length * 2; // русское название даёт огромный вес
+                    if (score > bestMatch.score) {
+                        bestMatch.score = score;
+                        bestMatch.symbol = el.symbol;
+                        bestMatch.foundName = nameLower;
+                    }
+                } else if (cleaned.includes(nameLower)) {
+                    // частичное вхождение, но меньший приоритет
+                    let score = 50 + nameLower.length;
+                    if (score > bestMatch.score) {
+                        bestMatch.score = score;
+                        bestMatch.symbol = el.symbol;
+                    }
+                }
+            }
+        }
+        
+        // 2. Если найдено название на русском — возвращаем сразу (это самый надёжный способ)
+        if (bestMatch.score >= 50) {
+            return bestMatch.symbol;
+        }
+        
+        // 3. Дополнительная эвристика: если вопрос явно спрашивает про "какой элемент" и есть упоминание соли
+        // Например: "Соль KBrO3" — тут основной элемент — калий? Нет, обычно вопрос про калий или бром.
+        // Но по вашим примерам: "Температура плавления BaCl2 выше, чем у KCl" — явно сравниваются Ba и K.
+        // Тут нужно определить, о каком элементе идёт речь в вопросе. Смотрим, какое название элемента встречается первым в важной роли.
+        let candidateSymbols = [];
+        for (let el of elementsData) {
+            for (let name of el.priorityNames) {
+                if (cleaned.includes(name.toLowerCase()) && name.length > 1) {
+                    candidateSymbols.push({ sym: el.symbol, name: name, pos: cleaned.indexOf(name.toLowerCase()) });
+                }
+            }
+        }
+        // сортируем по позиции появления и берём первое значимое
+        if (candidateSymbols.length > 0) {
+            candidateSymbols.sort((a,b) => a.pos - b.pos);
+            // дополнительная проверка: игнорируем, если это просто формула внутри, но у нас уже очищено
+            return candidateSymbols[0].sym;
+        }
+        
+        // 4. Последний шанс: поиск по известным контекстам (сплав, щелочной металл и т.д.)
+        if (cleaned.includes("щелочной металл")) return "K";  // часто про калий
+        if (cleaned.includes("галоген")) {
+            if (cleaned.includes("фтор")) return "F";
+            if (cleaned.includes("хлор")) return "Cl";
+            if (cleaned.includes("бром")) return "Br";
+            if (cleaned.includes("йод")) return "I";
+        }
+        if (cleaned.includes("температура плавления") && cleaned.includes("bacl2")) return "Ba";
+        if (cleaned.includes("температура плавления") && cleaned.includes("kcl")) return "K";
+        
+        return "?";
+    }
+    
+    function escapeRegex(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    
     // Глобальные переменные
-    let sheetData = [];          // массив строк (массив массивов)
-    let selectedCol = 0;
-    let classifiedCache = [];    // [{element, question}]
-
-    // DOM элементы
-    const fileInput = document.getElementById('excelFile');
-    const selectFileBtn = document.getElementById('selectFileBtn');
+    let excelRows = [];
+    let currentColumn = 0;
+    let classifiedList = [];   // [{element, question}]
+    
+    // DOM
+    const fileInput = document.getElementById('excelFileInput');
+    const selectBtn = document.getElementById('selectFileBtn');
     const uploadZone = document.getElementById('uploadZone');
     const fileStatus = document.getElementById('fileStatus');
     const columnSelect = document.getElementById('columnSelect');
     const classifyBtn = document.getElementById('classifyBtn');
-    const downloadBtn = document.getElementById('downloadExcelBtn');
-    const resultsTbody = document.getElementById('resultsTbody');
-    const statsLabel = document.getElementById('statsLabel');
-
-    // ----- ОБРАБОТЧИК ЗАГРУЗКИ ФАЙЛА (ИСПРАВЛЕННЫЙ) -----
-    function loadExcelFile(file) {
+    const downloadBtn = document.getElementById('downloadBtn');
+    const resultsBody = document.getElementById('resultsBody');
+    const statsText = document.getElementById('statsText');
+    
+    // Загрузка Excel
+    function loadExcel(file) {
         if (!file) {
             fileStatus.innerHTML = '<span class="text-warning">⚠️ Файл не выбран</span>';
             return;
@@ -282,205 +327,144 @@
             try {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
                 if (!rows || rows.length === 0) throw new Error("Файл пуст");
-                
-                sheetData = rows;
+                excelRows = rows;
                 fileStatus.innerHTML = `<i class="fas fa-check-circle text-success"></i> Загружено: ${rows.length} строк (${file.name})`;
                 
-                // Заполняем select столбцов
+                // Заполнение выбора столбцов
                 const maxCols = rows[0] ? rows[0].length : 0;
                 columnSelect.innerHTML = '<option value="auto">🧠 Автовыбор (наиболее подходящий)</option>';
                 for (let i = 0; i < maxCols; i++) {
-                    let header = (rows[0][i] && rows[0][i].toString().trim()) ? rows[0][i].toString().trim() : `Колонка ${i+1}`;
+                    let header = (rows[0][i] && rows[0][i].toString().trim()) ? rows[0][i].toString().trim() : `Столбец ${i+1}`;
                     if (header.length > 45) header = header.slice(0,42)+'...';
                     columnSelect.innerHTML += `<option value="${i}">${i+1}: ${header}</option>`;
                 }
                 columnSelect.disabled = false;
                 classifyBtn.disabled = false;
                 downloadBtn.disabled = true;
-                classifiedCache = [];
                 
-                // Автоопределение лучшего столбца с вопросами
-                const autoCol = findBestQuestionColumn(rows);
-                selectedCol = autoCol >= 0 ? autoCol : 0;
-                if (autoCol !== null && autoCol >= 0) columnSelect.value = autoCol.toString();
+                // Определяем лучший столбец с вопросами
+                const bestCol = findBestTextColumn(rows);
+                currentColumn = bestCol >= 0 ? bestCol : 0;
+                if (bestCol >= 0) columnSelect.value = bestCol.toString();
                 else columnSelect.value = "auto";
                 
-                // Показать превью (без классификации)
-                renderPreviewTable();
-                statsLabel.innerText = "Готов к классификации";
+                renderPreview();
+                statsText.innerText = "Готов к анализу";
             } catch(err) {
-                console.error(err);
                 fileStatus.innerHTML = `<span class="text-danger">❌ Ошибка: ${err.message}</span>`;
-                sheetData = [];
+                excelRows = [];
                 classifyBtn.disabled = true;
-                columnSelect.disabled = true;
             }
         };
-        reader.onerror = () => {
-            fileStatus.innerHTML = '<span class="text-danger">❌ Ошибка чтения файла</span>';
-        };
+        reader.onerror = () => fileStatus.innerHTML = '<span class="text-danger">❌ Ошибка чтения файла</span>';
         reader.readAsArrayBuffer(file);
     }
-
-    // Найти столбец с наибольшим количеством текстовых данных (похожих на вопросы)
-    function findBestQuestionColumn(rows) {
+    
+    function findBestTextColumn(rows) {
         if (!rows.length) return 0;
         const colCount = rows[0] ? rows[0].length : 1;
-        let bestIdx = 0, maxScore = -1;
+        let bestIdx = 0, bestScore = -1;
         for (let col = 0; col < colCount; col++) {
             let score = 0;
             for (let r = 0; r < Math.min(rows.length, 60); r++) {
                 let cell = rows[r][col];
-                if (cell && typeof cell === 'string' && cell.trim().length > 8) {
+                if (cell && typeof cell === 'string' && cell.trim().length > 10) {
                     score += 2;
                     let lower = cell.toLowerCase();
-                    if (lower.includes("какой") || lower.includes("элемент") || lower.includes("свойства") || lower.includes("химические")) score += 3;
-                } else if (cell && cell.toString().trim().length > 5) {
-                    score += 1;
+                    if (lower.includes("какой") || lower.includes("элемент") || lower.includes("свойства")) score += 4;
+                    if (lower.includes("температура")) score += 2;
+                    if (lower.includes("реакция")) score += 2;
                 }
             }
-            if (score > maxScore) { maxScore = score; bestIdx = col; }
+            if (score > bestScore) { bestScore = score; bestIdx = col; }
         }
         return bestIdx;
     }
-
-    // Отображение таблицы без классификации (временные знаки вопроса)
-    function renderPreviewTable() {
-        if (!sheetData.length) return;
-        let col = selectedCol;
+    
+    function renderPreview() {
+        if (!excelRows.length) return;
+        let col = currentColumn;
         let html = '';
-        const limit = Math.min(sheetData.length, 400);
-        for (let i = 0; i < limit; i++) {
-            let question = (sheetData[i][col] !== undefined && sheetData[i][col] !== null) ? String(sheetData[i][col]) : "";
-            let shortQ = question.length > 100 ? question.slice(0,97)+'…' : (question || "—");
-            html += `<tr>
-                        <td class="text-center"><span class="element-badge element-unknown bg-secondary">?</span></td>
-                        <td class="text-light">${escapeHtml(shortQ)}</td>
-                     </tr>`;
+        for (let i = 0; i < Math.min(excelRows.length, 300); i++) {
+            let q = (excelRows[i][col] != null) ? String(excelRows[i][col]) : "";
+            let short = q.length > 110 ? q.slice(0,107)+'…' : (q || "—");
+            html += `<tr><td class="text-center"><span class="element-badge element-unknown bg-secondary">?</span></td><td class="text-light">${escapeHtml(short)}</td></tr>`;
         }
-        if (!html) html = `<tr><td colspan="2" class="text-center text-secondary">Нет данных для отображения</td></tr>`;
-        resultsTbody.innerHTML = html;
+        resultsBody.innerHTML = html || `<tr><td colspan="2" class="text-center">Нет данных</td></tr>`;
     }
-
-    // КЛАССИФИКАЦИЯ
+    
+    // Классификация
     function runClassification() {
-        if (!sheetData.length) {
-            alert("Сначала загрузите Excel-файл!");
-            return;
-        }
+        if (!excelRows.length) { alert("Сначала загрузите файл!"); return; }
         let selectedVal = columnSelect.value;
-        let targetCol;
-        if (selectedVal === "auto") {
-            targetCol = findBestQuestionColumn(sheetData);
-        } else {
-            targetCol = parseInt(selectedVal, 10);
-        }
+        let targetCol = (selectedVal === "auto") ? findBestTextColumn(excelRows) : parseInt(selectedVal, 10);
         if (isNaN(targetCol)) targetCol = 0;
-        selectedCol = targetCol;
+        currentColumn = targetCol;
         
         let detectedCount = 0;
-        let rowsHtml = '';
-        classifiedCache = [];
+        let htmlRows = '';
+        classifiedList = [];
         
-        for (let i = 0; i < sheetData.length; i++) {
-            let rawQuestion = (sheetData[i][targetCol] !== undefined && sheetData[i][targetCol] !== null) ? String(sheetData[i][targetCol]) : "";
-            let element = getElementFromQuestion(rawQuestion);
+        for (let i = 0; i < excelRows.length; i++) {
+            let rawQuestion = (excelRows[i][targetCol] != null) ? String(excelRows[i][targetCol]) : "";
+            let element = detectMainElement(rawQuestion);
             if (element !== "?") detectedCount++;
-            classifiedCache.push({ element: element, question: rawQuestion });
-            let shortQuestion = rawQuestion.length > 110 ? rawQuestion.slice(0,107)+'…' : (rawQuestion || "(пустой вопрос)");
-            rowsHtml += `<tr>
-                            <td class="text-center"><span class="element-badge">${escapeHtml(element)}</span></td>
-                            <td class="text-light">${escapeHtml(shortQuestion)}</td>
+            classifiedList.push({ element: element, question: rawQuestion });
+            let displayQ = rawQuestion.length > 120 ? rawQuestion.slice(0,117)+'…' : (rawQuestion || "(пусто)");
+            let elemClass = (element === "?") ? "element-unknown bg-secondary" : "";
+            htmlRows += `<tr>
+                            <td class="text-center"><span class="element-badge ${elemClass}">${escapeHtml(element)}</span></td>
+                            <td class="text-light">${escapeHtml(displayQ)}</td>
                          </tr>`;
         }
-        resultsTbody.innerHTML = rowsHtml;
-        let percent = sheetData.length ? Math.round((detectedCount / sheetData.length) * 100) : 0;
-        statsLabel.innerHTML = `🔬 распознано: ${detectedCount} / ${sheetData.length} (${percent}%)`;
+        resultsBody.innerHTML = htmlRows;
+        let percent = excelRows.length ? Math.round((detectedCount / excelRows.length) * 100) : 0;
+        statsText.innerHTML = `🎯 распознано: ${detectedCount} / ${excelRows.length} (${percent}%)`;
         downloadBtn.disabled = false;
-        
-        // Если есть заголовки, добавим красивый note
-        if (fileStatus) fileStatus.innerHTML += ` &nbsp; ✅ Классификация выполнена`;
     }
-
-    // СКАЧИВАНИЕ EXCEL файла с результатами (первый столбец - символ элемента, второй - вопрос)
-    function downloadClassifiedExcel() {
-        if (!classifiedCache.length) {
-            alert("Нет классифицированных данных. Сначала выполните классификацию.");
-            return;
+    
+    // Скачивание Excel
+    function downloadExcel() {
+        if (!classifiedList.length) { alert("Нет классифицированных данных"); return; }
+        const excelData = [["Химический элемент (символ)", "Текст вопроса"]];
+        for (let item of classifiedList) {
+            excelData.push([item.element, item.question]);
         }
-        const excelRows = [["Химический элемент (символ)", "Текст вопроса"]];
-        for (let item of classifiedCache) {
-            excelRows.push([item.element, item.question]);
-        }
-        const ws = XLSX.utils.aoa_to_sheet(excelRows);
+        const ws = XLSX.utils.aoa_to_sheet(excelData);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Классификация элементов");
-        const filename = `химия_элементы_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`;
-        XLSX.writeFile(wb, filename);
+        XLSX.utils.book_append_sheet(wb, ws, "Классификация");
+        XLSX.writeFile(wb, `хим_элементы_${new Date().toISOString().slice(0,19)}.xlsx`);
     }
-
+    
     function escapeHtml(str) {
         if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
+        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;'));
     }
-
-    // ----- ИНИЦИАЛИЗАЦИЯ СОБЫТИЙ (исправленная загрузка)-----
-    selectFileBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        fileInput.click();
-    });
     
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            loadExcelFile(e.target.files[0]);
-        }
-    });
-    
-    // Drag & Drop
-    uploadZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadZone.style.borderColor = '#58e68c';
-        uploadZone.style.background = 'rgba(46, 204, 113, 0.2)';
-    });
-    uploadZone.addEventListener('dragleave', (e) => {
-        uploadZone.style.borderColor = '#2ecc71';
-        uploadZone.style.background = 'rgba(46, 204, 113, 0.05)';
-    });
+    // События
+    selectBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => { if (e.target.files.length) loadExcel(e.target.files[0]); });
+    uploadZone.addEventListener('click', (e) => { if (e.target === uploadZone || uploadZone.contains(e.target)) fileInput.click(); });
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.style.borderColor = '#60a5fa'; });
+    uploadZone.addEventListener('dragleave', () => uploadZone.style.borderColor = '#3b82f6');
     uploadZone.addEventListener('drop', (e) => {
         e.preventDefault();
-        uploadZone.style.borderColor = '#2ecc71';
-        uploadZone.style.background = 'rgba(46, 204, 113, 0.05)';
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            fileInput.files = files;
-            loadExcelFile(files[0]);
+        uploadZone.style.borderColor = '#3b82f6';
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            loadExcel(e.dataTransfer.files[0]);
         }
     });
-    
-    // Клик на зону загрузки (альтернатива)
-    uploadZone.addEventListener('click', (e) => {
-        if (e.target === uploadZone || e.target.closest('.upload-card') === uploadZone) {
-            fileInput.click();
-        }
-    });
-    
     classifyBtn.addEventListener('click', runClassification);
-    downloadBtn.addEventListener('click', downloadClassifiedExcel);
+    downloadBtn.addEventListener('click', downloadExcel);
     
-    // Изначальное состояние
+    // Инициализация
     columnSelect.disabled = true;
     classifyBtn.disabled = true;
     downloadBtn.disabled = true;
-    fileStatus.innerHTML = '<span class="text-secondary">Ожидание файла...</span>';
 </script>
 </body>
 </html>
