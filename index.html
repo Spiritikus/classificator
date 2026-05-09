@@ -2,64 +2,509 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Классификатор водородных вопросов (финальная версия)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ХимАнализ: автоопределение элемента по вопросу</title>
+    <!-- Bootstrap 5 + Font Awesome для стилизации -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- SheetJS для парсинга Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-        }
         body {
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-            background: #eef2f7;
-            margin: 0;
-            padding: 20px 16px;
-            color: #1e2a3a;
+            background: linear-gradient(145deg, #eef2f5 0%, #d9e4e8 100%);
+            font-family: 'Segoe UI', 'Rubik', system-ui, sans-serif;
         }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 28px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-            padding: 24px 28px 32px;
+        .glass-card {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            border: none;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
         }
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin: 0 0 0.2rem 0;
-            color: #0b3b5f;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .badge {
-            background: #e9ecef;
-            padding: 4px 14px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: normal;
-            color: #2c3e50;
-        }
-        .rules {
-            background: #f0f9ff;
-            border-radius: 20px;
-            padding: 14px 22px;
-            margin: 16px 0 24px 0;
-            border-left: 5px solid #1e6f9f;
-            font-size: 0.92rem;
-            line-height: 1.5;
-        }
-        .rules span {
-            font-weight: 700;
+        .card-header-custom {
+            background: #0f3b2c;
+            color: white;
+            border-radius: 2rem 2rem 0 0 !important;
+            padding: 1.2rem 1.8rem;
+            border-bottom: 4px solid #f4c542;
         }
         .upload-area {
-            background: #f9fbfd;
-            border: 2px dashed #cbd5e1;
-            border-radius: 24px;
-            padding: 20px;
+            border: 2px dashed #2a7f6e;
+            border-radius: 1.5rem;
+            background: #fefdf8;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            background: #eef9f0;
+            border-color: #1e5a3c;
+        }
+        .element-chip {
+            background: #1e5a3c;
+            color: white;
+            font-weight: 700;
+            border-radius: 40px;
+            padding: 5px 16px;
+            display: inline-block;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            min-width: 70px;
             text-align: center;
-            margin-bottom: 28px;
+        }
+        .element-chip-unknown {
+            background: #6c757d;
+        }
+        .table-responsive-custom {
+            max-height: 62vh;
+            overflow-y: auto;
+            border-radius: 1.2rem;
+            background: white;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.05);
+        }
+        .table thead th {
+            background: #e9f0ec;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            font-weight: 600;
+            border-bottom: 2px solid #cbdcd2;
+        }
+        .question-cell {
+            font-weight: 500;
+            color: #1e2f2a;
+            word-break: break-word;
+        }
+        .stats-pulse {
+            background: #e9ecef;
+            border-radius: 60px;
+            padding: 6px 18px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .btn-smart {
+            background: #166534;
+            border: none;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+        .btn-smart:hover {
+            background: #0f4a2d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+        }
+        .footer-tip {
+            font-size: 0.75rem;
+            color: #2c5a44;
+            border-top: 1px solid #d0e2d8;
+            padding-top: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-4 py-lg-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-11">
+            <div class="glass-card overflow-hidden">
+                <div class="card-header-custom d-flex flex-wrap justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0 fs-3 fw-bold"><i class="fas fa-atom me-2"></i> Элемент-детектор</h3>
+                        <p class="mb-0 mt-1 opacity-75 small">Автоматическая классификация вопросов по химическим элементам</p>
+                    </div>
+                    <i class="fas fa-flask fa-2x opacity-50"></i>
+                </div>
+
+                <div class="card-body p-4 p-lg-5">
+                    <!-- Блок загрузки файла -->
+                    <div class="mb-4">
+                        <div id="dropZone" class="upload-area p-4 text-center">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-success mb-2"></i>
+                            <h5 class="fw-semibold">Загрузите Excel-файл</h5>
+                            <p class="text-muted small">Поддерживаются .xlsx, .xls — файл с вопросами по химии. Первая строка может содержать заголовки.</p>
+                            <label for="excelFileInput" class="btn btn-smart text-white px-4 py-2 rounded-pill">
+                                <i class="fas fa-folder-open"></i> Выбрать файл
+                            </label>
+                            <input type="file" id="excelFileInput" accept=".xlsx, .xls, .xlsm" class="d-none">
+                            <div id="fileNameDisplay" class="mt-2 small fw-semibold text-success"></div>
+                        </div>
+                        <div id="loadingStatus" class="mt-2 text-center"></div>
+                    </div>
+
+                    <!-- Панель управления: выбор столбца вопросов + кнопка запуска классификации -->
+                    <div class="row g-3 mb-4 align-items-end bg-light p-3 rounded-4">
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold"><i class="fas fa-table-list"></i> Столбец с вопросами</label>
+                            <select id="columnSelect" class="form-select form-select-sm rounded-pill" disabled>
+                                <option value="auto">🧠 Автоопределение (умный выбор)</option>
+                            </select>
+                            <div class="form-text small">Выберите колонку, где находятся тексты вопросов о свойствах элементов.</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold"><i class="fas fa-microchip"></i> Классификация</label>
+                            <button id="classifyButton" class="btn btn-smart text-white w-100 py-2 rounded-pill" disabled>
+                                <i class="fas fa-magic"></i> Определить элементы автоматически
+                            </button>
+                        </div>
+                        <div class="col-md-3 text-md-end">
+                            <div id="statisticBox" class="stats-pulse d-inline-flex align-items-center">
+                                <i class="fas fa-chart-simple me-1"></i> <span id="statText">Нет данных</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Таблица результатов: первый столбец - символ элемента, второй - вопрос -->
+                    <div class="table-responsive-custom">
+                        <table class="table table-hover table-bordered mb-0 align-middle" id="resultTable">
+                            <thead>
+                                <tr class="text-center">
+                                    <th style="width: 130px;">🧪 Хим. элемент</th>
+                                    <th>📖 Текст вопроса (описание свойств)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableContent">
+                                <tr>
+                                    <td colspan="2" class="text-center py-5 text-muted">
+                                        <i class="fas fa-database fa-2x mb-2 d-block"></i>
+                                        Загрузите Excel-файл, после чего нажмите «Определить элементы»
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="footer-tip mt-3 d-flex justify-content-between flex-wrap">
+                        <span><i class="fas fa-robot"></i> ИИ-анализ: учитываются названия элементов, символы (Na, Fe, Cl) и химические контексты.</span>
+                        <span><i class="fas fa-chalkboard-user"></i> Каждый вопрос анализируется — в первый столбец выводится символ элемента.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------
+    // РАСШИРЕННАЯ БАЗА ХИМИЧЕСКИХ ЭЛЕМЕНТОВ + синонимы / ключевые оксиды, свойства
+    // Классификация опирается на то, что вопрос описывает химические свойства определённого элемента.
+    // Для каждого элемента: символ и набор маркеров (названия элемента, типичные соединения, признаки)
+    // --------------------------------------------
+    const elementKnowledge = [
+        { symbol: "H",  keywords: ["водород", "hydrogen", "h2", "протий", "дейтерий", "водорода", "кислотность", "ph", "гидрид"] },
+        { symbol: "He", keywords: ["гелий", "helium", "гелия", "инертный газ", "he"] },
+        { symbol: "Li", keywords: ["литий", "lithium", "лития", "li-ion", "щелочной металл"] },
+        { symbol: "Be", keywords: ["бериллий", "beryllium", "бериллия"] },
+        { symbol: "B",  keywords: ["бор", "boron", "бора", "борная кислота", "бура"] },
+        { symbol: "C",  keywords: ["углерод", "carbon", "уголь", "алмаз", "графит", "карбид", "органическая химия", "co2", "caco3"] },
+        { symbol: "N",  keywords: ["азот", "nitrogen", "аммиак", "нитраты", "нитриды", "n2", "азотная кислота"] },
+        { symbol: "O",  keywords: ["кислород", "oxygen", "оксид", "о2", "озон", "окисление", "горение"] },
+        { symbol: "F",  keywords: ["фтор", "fluorine", "фтора", "фторид", "f2", "плавиковая кислота"] },
+        { symbol: "Ne", keywords: ["неон", "neon", "неона"] },
+        { symbol: "Na", keywords: ["натрий", "sodium", "натрия", "nacl", "поваренная соль", "едкий натр", "щелочь"] },
+        { symbol: "Mg", keywords: ["магний", "magnesium", "магния", "mgcl2", "магниевые сплавы"] },
+        { symbol: "Al", keywords: ["алюминий", "aluminium", "aluminum", "алюминия", "al2o3", "оксид алюминия", "легкий металл"] },
+        { symbol: "Si", keywords: ["кремний", "silicon", "кремния", "sio2", "силикат", "кремнезем"] },
+        { symbol: "P",  keywords: ["фосфор", "phosphorus", "фосфора", "фосфат", "p4", "фосфорная кислота"] },
+        { symbol: "S",  keywords: ["сера", "sulfur", "серы", "h2so4", "сульфид", "серная кислота", "сульфат"] },
+        { symbol: "Cl", keywords: ["хлор", "chlorine", "хлора", "hcl", "хлорид", "соляная кислота", "хлорная известь"] },
+        { symbol: "Ar", keywords: ["аргон", "argon", "аргона"] },
+        { symbol: "K",  keywords: ["калий", "potassium", "калия", "kcl", "поташ", "koh"] },
+        { symbol: "Ca", keywords: ["кальций", "calcium", "кальция", "caco3", "мел", "известняк", "гипс", "cao"] },
+        { symbol: "Sc", keywords: ["скандий", "scandium"] },
+        { symbol: "Ti", keywords: ["титан", "titanium", "титана", "tio2", "титановый сплав"] },
+        { symbol: "V",  keywords: ["ванадий", "vanadium"] },
+        { symbol: "Cr", keywords: ["хром", "chromium", "хрома", "cr2o3", "нержавеющая сталь", "хромирование"] },
+        { symbol: "Mn", keywords: ["марганец", "manganese", "марганца", "kmno4", "перманганат"] },
+        { symbol: "Fe", keywords: ["железо", "iron", "железа", "fe2o3", "ржавчина", "феррум", "чугун", "сталь", "феррит"] },
+        { symbol: "Co", keywords: ["кобальт", "cobalt", "кобальта"] },
+        { symbol: "Ni", keywords: ["никель", "nickel", "никеля", "никелирование"] },
+        { symbol: "Cu", keywords: ["медь", "copper", "меди", "cuo", "медный купорос", "cuprite", "бронза", "латунь"] },
+        { symbol: "Zn", keywords: ["цинк", "zinc", "цинка", "zno", "оцинковка", "цинковое покрытие"] },
+        { symbol: "Ga", keywords: ["галлий", "gallium"] },
+        { symbol: "Ge", keywords: ["германий", "germanium"] },
+        { symbol: "As", keywords: ["мышьяк", "arsenic", "arsen", "арсенид"] },
+        { symbol: "Se", keywords: ["селен", "selenium"] },
+        { symbol: "Br", keywords: ["бром", "bromine", "брома", "br2", "бромид"] },
+        { symbol: "Kr", keywords: ["криптон", "krypton"] },
+        { symbol: "Rb", keywords: ["рубидий", "rubidium"] },
+        { symbol: "Sr", keywords: ["стронций", "strontium"] },
+        { symbol: "Zr", keywords: ["цирконий", "zirconium"] },
+        { symbol: "Mo", keywords: ["молибден", "molybdenum"] },
+        { symbol: "Ag", keywords: ["серебро", "silver", "серебра", "аргентум", "agcl"] },
+        { symbol: "Cd", keywords: ["кадмий", "cadmium"] },
+        { symbol: "In", keywords: ["индий", "indium"] },
+        { symbol: "Sn", keywords: ["олово", "tin", "олова", "sncl2", "станум"] },
+        { symbol: "Sb", keywords: ["сурьма", "antimony"] },
+        { symbol: "Te", keywords: ["теллур", "tellurium"] },
+        { symbol: "I",  keywords: ["йод", "iodine", "иод", "йода", "иодид", "i2"] },
+        { symbol: "Xe", keywords: ["ксенон", "xenon"] },
+        { symbol: "Cs", keywords: ["цезий", "cesium"] },
+        { symbol: "Ba", keywords: ["барий", "barium", "бария", "baso4"] },
+        { symbol: "La", keywords: ["лантан", "lanthanum"] },
+        { symbol: "Ce", keywords: ["церий", "cerium"] },
+        { symbol: "Sm", keywords: ["самарий", "samarium"] },
+        { symbol: "Eu", keywords: ["европий", "europium"] },
+        { symbol: "Gd", keywords: ["гадолиний", "gadolinium"] },
+        { symbol: "W",  keywords: ["вольфрам", "tungsten", "вольфрама", "карбид вольфрама"] },
+        { symbol: "Pt", keywords: ["платина", "platinum", "платины", "катализатор"] },
+        { symbol: "Au", keywords: ["золото", "gold", "золота", "аурум", "аурум", "червонное золото"] },
+        { symbol: "Hg", keywords: ["ртуть", "mercury", "ртути", "hgcl2", "сулема"] },
+        { symbol: "Pb", keywords: ["свинец", "lead", "свинца", "плюмбум", "pbo", "аккумулятор"] },
+        { symbol: "Bi", keywords: ["висмут", "bismuth"] },
+        { symbol: "U",  keywords: ["уран", "uranium", "урана", "ядерное топливо"] },
+        { symbol: "Pu", keywords: ["плутоний", "plutonium"] },
+        { symbol: "Ra", keywords: ["радий", "radium"] },
+        { symbol: "Th", keywords: ["торий", "thorium"] }
+    ];
+
+    // Функция определения элемента по тексту вопроса (интеллектуальный поиск свойств)
+    function detectChemicalElement(questionText) {
+        if (!questionText || questionText.trim().length === 0) return "?";
+        const text = questionText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        
+        let bestMatch = { symbol: "?", score: 0 };
+        
+        for (let elem of elementKnowledge) {
+            let currentScore = 0;
+            // Проверка ключевых слов
+            for (let kw of elem.keywords) {
+                const kwLower = kw.toLowerCase();
+                // поиск целого слова или в составе (но для коротких kw важна граница, чтобы не считать "li" в "литий")
+                let regex;
+                if (kwLower.length <= 2 && /^[a-z]{1,2}$/.test(kwLower)) {
+                    // очень короткий символ или аббревиатура - ищем границы слов
+                    regex = new RegExp(`\\b${escapeRegex(kwLower)}\\b`, 'i');
+                } else {
+                    regex = new RegExp(`(\\b${escapeRegex(kwLower)}\\b|${escapeRegex(kwLower)})`, 'i');
+                }
+                if (regex.test(text)) {
+                    // увеличиваем вес: чем длиннее ключевое слово, тем значимее
+                    let weight = 1 + (kwLower.length * 0.15);
+                    currentScore += weight;
+                }
+            }
+            // дополнительный бонус за символ элемента (Fe, Na, Cl) именно как отдельное слово с учетом регистра
+            const symbolPattern = new RegExp(`\\b${elem.symbol}\\b`, 'i');
+            if (symbolPattern.test(text)) {
+                currentScore += 2.5; // символ - сильный признак
+            }
+            // также учитываем встречаемость окончаний "ий", "ый" не нужно, но плюс за оксиды типа "оксид железа"
+            // если фраза содержит "свойства элемента X", проверим: специальная эвристика
+            if (text.includes(elem.symbol.toLowerCase()) && text.match(/\bсвойства\b|\bхарактеристик\b|\bхимические свойства\b/)) {
+                currentScore += 1.2;
+            }
+            if (currentScore > bestMatch.score) {
+                bestMatch.score = currentScore;
+                bestMatch.symbol = elem.symbol;
+            }
+        }
+        
+        // Вторая эвристика: если вопрос явно спрашивает про "какой элемент" или "определите элемент", 
+        // и встречается один конкретный символ с высоким весом. Уже обработано.
+        // Дополнительный fallback: если балл недостаточен, но найдено упоминание символа - возвращаем его.
+        if (bestMatch.score > 0.6) {
+            return bestMatch.symbol;
+        } else {
+            // крайний случай: возможно, в тексте просто есть один из символов (Fe, Na) в любом виде
+            for (let elem of elementKnowledge) {
+                if (new RegExp(`\\b${elem.symbol}\\b`, 'i').test(text)) {
+                    return elem.symbol;
+                }
+                for (let kw of elem.keywords) {
+                    if (kw.length > 2 && text.includes(kw.toLowerCase())) {
+                        return elem.symbol;
+                    }
+                }
+            }
+            return "?";
+        }
+    }
+    
+    function escapeRegex(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    
+    // Глобальные переменные
+    let rawSheetRows = [];      // все строки из Excel
+    let currentQuestionCol = 0; // индекс столбца с вопросами
+    let columnSelect = document.getElementById('columnSelect');
+    let classifyBtn = document.getElementById('classifyButton');
+    let tableBody = document.getElementById('tableContent');
+    let statSpan = document.getElementById('statText');
+    let fileInput = document.getElementById('excelFileInput');
+    let fileNameDisplay = document.getElementById('fileNameDisplay');
+    
+    // Обработка загрузки файла
+    fileInput.addEventListener('change', handleExcelUpload);
+    
+    function handleExcelUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        fileNameDisplay.innerHTML = `<i class="fas fa-file-excel"></i> ${file.name} (загружается...)`;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: "" });
+            if (!rows || rows.length === 0) {
+                fileNameDisplay.innerHTML = '<span class="text-danger">Ошибка: файл пуст</span>';
+                return;
+            }
+            rawSheetRows = rows;
+            // Заполним выпадающий список столбцов
+            const maxCols = rows[0] ? rows[0].length : 0;
+            columnSelect.innerHTML = '<option value="auto">🧠 Авто (наиболее подходящий столбец)</option>';
+            for (let i = 0; i < maxCols; i++) {
+                let headerSample = (rows[0][i] && rows[0][i].toString().trim()) ? rows[0][i].toString().trim() : `Столбец ${i+1}`;
+                if (headerSample.length > 35) headerSample = headerSample.slice(0,32)+'...';
+                columnSelect.innerHTML += `<option value="${i}">${i+1}: ${headerSample}</option>`;
+            }
+            columnSelect.disabled = false;
+            classifyBtn.disabled = false;
+            
+            // Автоопределение лучшей колонки с вопросами
+            const bestCol = detectBestQuestionColumn(rawSheetRows);
+            currentQuestionCol = bestCol;
+            if (bestCol !== null && bestCol >= 0) {
+                columnSelect.value = bestCol.toString();
+            } else {
+                columnSelect.value = "auto";
+                currentQuestionCol = 0;
+            }
+            fileNameDisplay.innerHTML = `<i class="fas fa-check-circle text-success"></i> ${file.name} (${rawSheetRows.length} строк) готов. Нажмите классифицировать.`;
+            // Показываем превью без классификации (символы "?")
+            renderPreviewWithoutClassification(currentQuestionCol);
+        };
+        reader.readAsArrayBuffer(file);
+    }
+    
+    function detectBestQuestionColumn(rows) {
+        if (rows.length < 2) return 0;
+        let bestIdx = 0;
+        let maxTextLikeness = -1;
+        const colCount = rows[0] ? rows[0].length : 1;
+        for (let c = 0; c < colCount; c++) {
+            let nonEmptyCount = 0;
+            let totalLength = 0;
+            let hasQuestionWords = 0;
+            for (let r = 0; r < Math.min(rows.length, 60); r++) {
+                let cellValue = rows[r][c];
+                if (cellValue && typeof cellValue === 'string' && cellValue.trim().length > 5) {
+                    nonEmptyCount++;
+                    totalLength += cellValue.trim().length;
+                    let lowerVal = cellValue.toLowerCase();
+                    if (lowerVal.includes("какой") || lowerVal.includes("каком") || lowerVal.includes("элемент") ||
+                        lowerVal.includes("свойства") || lowerVal.includes("химические") || lowerVal.includes("реакция") ||
+                        lowerVal.includes("вещество") || lowerVal.includes("соединение") || lowerVal.includes("формула")) {
+                        hasQuestionWords++;
+                    }
+                } else if (cellValue && typeof cellValue !== 'string') {
+                    let strVal = String(cellValue).trim();
+                    if (strVal.length > 4) {
+                        nonEmptyCount++;
+                        totalLength += strVal.length;
+                    }
+                }
+            }
+            let score = nonEmptyCount * 2 + totalLength / 40 + hasQuestionWords * 3;
+            if (score > maxTextLikeness) {
+                maxTextLikeness = score;
+                bestIdx = c;
+            }
+        }
+        return bestIdx;
+    }
+    
+    function renderPreviewWithoutClassification(colIdx) {
+        if (!rawSheetRows.length) return;
+        let html = '';
+        const limitRows = rawSheetRows.slice(0, 500);
+        for (let i = 0; i < limitRows.length; i++) {
+            let question = (limitRows[i][colIdx] !== undefined && limitRows[i][colIdx] !== null) ? String(limitRows[i][colIdx]) : "";
+            let shortQuestion = question.length > 110 ? question.substr(0, 107) + '...' : (question || "— пустой вопрос —");
+            html += `<tr>
+                        <td class="text-center"><span class="element-chip element-chip-unknown">?</span></td>
+                        <td class="question-cell">${escapeHtml(shortQuestion)}</td>
+                     </tr>`;
+        }
+        if (html === "") html = `<tr><td colspan="2" class="text-center">Нет данных для отображения</td></tr>`;
+        tableBody.innerHTML = html;
+        statSpan.innerHTML = `⏳ ожидает классификации`;
+    }
+    
+    // Кнопка классификации: анализируем каждый вопрос и проставляем символ элемента в первый столбец
+    classifyBtn.addEventListener('click', () => {
+        if (!rawSheetRows.length) {
+            alert("Сначала загрузите Excel-файл.");
+            return;
+        }
+        let selectedCol = columnSelect.value;
+        let targetCol = currentQuestionCol;
+        if (selectedCol === "auto") {
+            targetCol = detectBestQuestionColumn(rawSheetRows);
+        } else {
+            targetCol = parseInt(selectedCol, 10);
+        }
+        if (isNaN(targetCol)) targetCol = 0;
+        currentQuestionCol = targetCol;
+        
+        // Проходим по всем строкам и классифицируем
+        let classifiedCount = 0;
+        let resultHtml = '';
+        for (let i = 0; i < rawSheetRows.length; i++) {
+            let rawQuestion = (rawSheetRows[i][targetCol] !== undefined && rawSheetRows[i][targetCol] !== null) ? String(rawSheetRows[i][targetCol]) : "";
+            let element = detectChemicalElement(rawQuestion);
+            if (element !== "?") classifiedCount++;
+            let displayQuestion = rawQuestion.length > 120 ? rawQuestion.substring(0, 117) + "…" : (rawQuestion || "(пустой вопрос)");
+            resultHtml += `<tr>
+                            <td class="text-center"><span class="element-chip">${escapeHtml(element)}</span></td>
+                            <td class="question-cell">${escapeHtml(displayQuestion)}</td>
+                          </tr>`;
+        }
+        if (resultHtml === "") resultHtml = `<tr><td colspan="2" class="text-center">Нет данных</td></tr>`;
+        tableBody.innerHTML = resultHtml;
+        const percent = rawSheetRows.length ? Math.round((classifiedCount / rawSheetRows.length) * 100) : 0;
+        statSpan.innerHTML = `🔬 распознано: ${classifiedCount} / ${rawSheetRows.length} (${percent}%)`;
+        // дополнительный тост в title
+    });
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // Дропзона для удобства
+    const dropZone = document.getElementById('dropZone');
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.background = "#e2f2e8";
+    });
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.background = "#fefdf8";
+    });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.background = "#fefdf8";
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length) {
+            fileInput.files = files;
+            handleExcelUpload({ target: { files: files } });
+        }
+    });
+    
+    // Инициализация блокировки
+    columnSelect.disabled = true;
+    classifyBtn.disabled = true;
+</script>
+</body>
+</html>            margin-bottom: 28px;
         }
         .upload-label {
             background: #1e6f9f;
