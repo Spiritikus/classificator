@@ -2,49 +2,50 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ХимГруппы — классификация по группам элементов (C, Si, N, P, Al, Ga...)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ХимКлассификатор — все группы элементов</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
         body {
-            background: linear-gradient(145deg, #0f1a24 0%, #09121a 100%);
+            background: linear-gradient(145deg, #0a1620 0%, #061018 100%);
             font-family: 'Segoe UI', system-ui;
+            min-height: 100vh;
         }
-        .glass-panel {
-            background: rgba(20, 32, 45, 0.94);
+        .glass-card {
+            background: rgba(18, 30, 40, 0.94);
             backdrop-filter: blur(12px);
-            border-radius: 2rem;
-            border: 1px solid rgba(0, 200, 150, 0.3);
-            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.5);
+            border-radius: 1.8rem;
+            border: 1px solid rgba(66, 153, 225, 0.4);
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.5);
         }
-        .header-glow {
-            background: linear-gradient(95deg, #0f2a2a, #0a1f22);
-            border-radius: 2rem 2rem 0 0;
-            border-bottom: 2px solid #00c896;
+        .header-gradient {
+            background: linear-gradient(95deg, #0f2838, #0a1f2c);
+            border-radius: 1.8rem 1.8rem 0 0;
+            border-bottom: 2px solid #4299e1;
         }
-        .upload-area {
-            border: 2px dashed #00c896;
+        .upload-box {
+            border: 2px dashed #4299e1;
             border-radius: 1.2rem;
-            background: rgba(0, 200, 150, 0.05);
+            background: rgba(66, 153, 225, 0.05);
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
-        .upload-area:hover {
-            background: rgba(0, 200, 150, 0.12);
-            border-color: #33ffbb;
+        .upload-box:hover {
+            background: rgba(66, 153, 225, 0.12);
+            border-color: #63b3ed;
         }
-        .btn-chem {
-            background: linear-gradient(95deg, #1d6f5c, #0f5342);
+        .btn-primary-custom {
+            background: linear-gradient(95deg, #2563eb, #1e40af);
             border: none;
             font-weight: 600;
         }
-        .btn-chem:hover {
-            background: linear-gradient(95deg, #2c8e74, #166c56);
+        .btn-primary-custom:hover {
+            background: linear-gradient(95deg, #3b82f6, #2563eb);
             transform: translateY(-1px);
         }
-        .table-wrapper {
+        .table-scroll {
             max-height: 55vh;
             overflow-y: auto;
             border-radius: 1rem;
@@ -54,118 +55,132 @@
             color: #eef2ff;
         }
         .table thead th {
-            background: #11232e;
+            background: #112a38;
             position: sticky;
             top: 0;
             z-index: 10;
-            border-bottom: 2px solid #00c896;
+            border-bottom: 2px solid #4299e1;
         }
         .elem-badge {
-            background: #1f6e5a;
-            padding: 5px 12px;
+            background: #1f6e6a;
+            padding: 5px 14px;
             border-radius: 40px;
             font-weight: bold;
             min-width: 70px;
             display: inline-block;
             text-align: center;
         }
-        .group-select {
-            background-color: #1e3a38 !important;
-            color: white;
-            border-color: #2eccaa;
-        }
-        .stat-group {
-            background: #0d322c;
+        .stat-panel {
+            background: #0d2f2a;
             border-radius: 50px;
             padding: 6px 18px;
-            font-size: 0.85rem;
         }
-        .footer-note {
+        select.form-select {
+            background-color: #1a2f3a !important;
+            color: white !important;
+            border-color: #4299e1;
+        }
+        option {
+            background-color: #1a2f3a;
+        }
+        .footer-info {
             font-size: 0.7rem;
-            border-top: 1px solid #2a4a4a;
+            border-top: 1px solid #2d4a6e;
         }
     </style>
 </head>
 <body>
 
-<div class="container py-4 py-lg-5">
+<div class="container py-4 py-md-5">
     <div class="row justify-content-center">
         <div class="col-xl-10 col-lg-11">
-            <div class="glass-panel overflow-hidden">
-                <div class="header-glow p-4">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <div class="glass-card overflow-hidden">
+                <div class="header-gradient p-4">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h2 class="text-white fw-bold"><i class="fas fa-layer-group me-2 text-info"></i> ХимГруппы</h2>
-                            <p class="text-info-emphasis small mb-0">Классификация по группам: C/Si, N/P/As, Al/Ga/In/Tl, O/S/Se и др.</p>
+                            <h2 class="text-white fw-bold mb-0"><i class="fas fa-chart-line me-2 text-primary"></i> Менделеев Классификатор</h2>
+                            <p class="text-info-emphasis small mt-1">Все группы элементов — точное определение по тексту вопроса</p>
                         </div>
-                        <i class="fas fa-chalkboard-user fa-3x text-info opacity-50"></i>
+                        <i class="fas fa-atom fa-3x text-primary opacity-50"></i>
                     </div>
                 </div>
 
                 <div class="p-4 p-md-5">
-                    <!-- Загрузка файла -->
+                    <!-- ПРОСТАЯ НАДЁЖНАЯ ЗАГРУЗКА -->
                     <div class="mb-4">
-                        <div id="dropZone" class="upload-area p-4 text-center">
-                            <i class="fas fa-file-excel fa-3x text-info mb-2"></i>
-                            <h5 class="text-white">Нажмите или перетащите Excel-файл</h5>
-                            <p class="text-secondary small">.xlsx, .xls — вопросы по химии элементов подгрупп</p>
-                            <input type="file" id="excelInput" accept=".xlsx, .xls" style="display: none;">
-                            <button id="selectFileBtn" class="btn btn-chem text-white rounded-pill px-4">
+                        <div id="uploadArea" class="upload-box p-4 text-center">
+                            <i class="fas fa-file-excel fa-3x text-primary mb-2"></i>
+                            <h5 class="text-white">Загрузите Excel-файл с вопросами</h5>
+                            <p class="text-secondary small">Поддерживаются .xlsx, .xls</p>
+                            <button id="uploadButton" class="btn btn-primary-custom text-white rounded-pill px-4">
                                 <i class="fas fa-folder-open"></i> Выбрать файл
                             </button>
-                            <div id="fileStatus" class="mt-3 small fw-bold text-info"></div>
+                            <div id="statusMsg" class="mt-3 small fw-bold text-info"></div>
                         </div>
+                        <input type="file" id="fileSelector" accept=".xlsx, .xls, .xlsm" style="display: none;">
                     </div>
 
-                    <!-- Настройки: столбец + группа -->
+                    <!-- Панель управления -->
                     <div class="row g-3 mb-4 align-items-end bg-black bg-opacity-25 p-3 rounded-4">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <label class="form-label text-white fw-semibold"><i class="fas fa-columns"></i> Столбец с вопросами</label>
-                            <select id="colSelect" class="form-select group-select" disabled>
-                                <option value="auto">🧠 Автовыбор</option>
+                            <select id="columnPicker" class="form-select" disabled>
+                                <option value="auto">🧠 Автоопределение</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label text-white fw-semibold"><i class="fas fa-users"></i> Группа элементов</label>
-                            <select id="groupSelect" class="form-select group-select">
-                                <option value="auto">🔁 Авто (определять по контексту)</option>
-                                <option value="C">🟢 Углерод / Кремний (C, Si)</option>
-                                <option value="N">🔵 Азот / Фосфор / Мышьяк (N, P, As)</option>
-                                <option value="O">🟡 Кислород / Сера / Селен (O, S, Se)</option>
-                                <option value="Al">🟠 Алюминий / Галлий / Индий / Таллий (Al, Ga, In, Tl)</option>
-                                <option value="Hal">🟣 Галогены (F, Cl, Br, I)</option>
-                                <option value="alkali">⚪ Щелочные металлы (Li, Na, K, Rb, Cs)</option>
-                                <option value="alkaline">⚪ Щёлочноземельные (Be, Mg, Ca, Sr, Ba)</option>
+                        <div class="col-md-5">
+                            <label class="form-label text-white fw-semibold"><i class="fas fa-table"></i> Группа элементов (по таблице Менделеева)</label>
+                            <select id="groupPicker" class="form-select">
+                                <option value="auto">🎯 Авто (определить по контексту)</option>
+                                <option value="1">1 группа: H, Li, Na, K, Rb, Cs, Fr (щелочные)</option>
+                                <option value="2">2 группа: Be, Mg, Ca, Sr, Ba, Ra (щелочноземельные)</option>
+                                <option value="13">13 группа: B, Al, Ga, In, Tl</option>
+                                <option value="14">14 группа: C, Si, Ge, Sn, Pb</option>
+                                <option value="15">15 группа: N, P, As, Sb, Bi</option>
+                                <option value="16">16 группа: O, S, Se, Te, Po</option>
+                                <option value="17">17 группа: F, Cl, Br, I, At (галогены)</option>
+                                <option value="18">18 группа: He, Ne, Ar, Kr, Xe, Rn (инертные)</option>
+                                <option value="3">3 группа: Sc, Y, La, Ac</option>
+                                <option value="4">4 группа: Ti, Zr, Hf, Rf</option>
+                                <option value="5">5 группа: V, Nb, Ta, Db</option>
+                                <option value="6">6 группа: Cr, Mo, W, Sg</option>
+                                <option value="7">7 группа: Mn, Tc, Re, Bh</option>
+                                <option value="8">8 группа: Fe, Ru, Os, Hs</option>
+                                <option value="9">9 группа: Co, Rh, Ir, Mt</option>
+                                <option value="10">10 группа: Ni, Pd, Pt, Ds</option>
+                                <option value="11">11 группа: Cu, Ag, Au, Rg</option>
+                                <option value="12">12 группа: Zn, Cd, Hg, Cn</option>
+                                <option value="lan">Лантаноиды (La-Lu)</option>
+                                <option value="act">Актиноиды (Ac-Lr)</option>
                             </select>
-                            <div class="form-text text-info small">Выберите группу для точной классификации (или оставьте "Авто")</div>
                         </div>
-                        <div class="col-md-4 text-md-end">
-                            <button id="classifyBtn" class="btn btn-chem text-white w-100 py-2 rounded-pill" disabled>
-                                <i class="fas fa-magic"></i> Классифицировать
+                        <div class="col-md-2 text-end">
+                            <button id="startClassify" class="btn btn-primary-custom text-white w-100 py-2 rounded-pill" disabled>
+                                <i class="fas fa-magic"></i> Анализ
                             </button>
                         </div>
                     </div>
 
-                    <!-- Статистика и таблица -->
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div class="stat-group text-white"><i class="fas fa-chart-simple me-1"></i> <span id="statsText">Нет данных</span></div>
-                        <button id="downloadBtn" class="btn btn-outline-info rounded-pill px-4 py-1" disabled>
+                    <!-- Результаты -->
+                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                        <div class="stat-panel text-white"><i class="fas fa-chart-bar me-1"></i> <span id="resultStats">Нет данных</span></div>
+                        <button id="exportExcel" class="btn btn-outline-primary rounded-pill px-4 py-1" disabled>
                             <i class="fas fa-download"></i> Скачать Excel
                         </button>
                     </div>
 
-                    <div class="table-wrapper mt-2">
+                    <div class="table-scroll">
                         <table class="table table-hover table-bordered mb-0">
                             <thead>
-                                <tr><th style="width: 130px;">🧪 Элемент</th><th>📄 Текст вопроса</th></tr>
+                                <tr><th style="width: 120px;">🔬 Элемент</th><th>📄 Текст вопроса</th></tr>
                             </thead>
-                            <tbody id="resultBody">
-                                <tr><td colspan="2" class="text-center text-secondary py-5">Загрузите файл → выберите группу → нажмите «Классифицировать»</td></tr>
+                            <tbody id="tableResults">
+                                <tr><td colspan="2" class="text-center text-secondary py-5">Загрузите файл и нажмите "Анализ"</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="footer-note text-secondary pt-3 mt-2">
-                        <i class="fas fa-dna"></i> Алгоритм: по ключевым словам (цианамид, циановая кислота → углерод; мочевина → азот; комплексные соединения → группа) и по выбранной группе.
+                    <div class="footer-info text-secondary pt-3 mt-2">
+                        <i class="fas fa-database"></i> База: все группы периодической системы + ключевые слова (оксиды, кислоты, названия элементов)
                     </div>
                 </div>
             </div>
@@ -174,72 +189,62 @@
 </div>
 
 <script>
-    // --------------------------------------------------------------
-    // РАСШИРЕННАЯ БАЗА: ГРУППЫ И ИХ ЭЛЕМЕНТЫ + КЛЮЧЕВЫЕ СЛОВА
-    // --------------------------------------------------------------
-    const groups = {
-        C: {
-            name: "Углерод / Кремний",
-            elements: ["C", "Si"],
-            keywords: ["углерод", "carbon", "кремний", "silicon", "цианамид", "циановая кислота", "цианид", "дициан", "hcn", "(cn)2", "cn-", "со2", "оксид углерода", "карбид", "силикат", "sio2", "карбонат"]
-        },
-        N: {
-            name: "Азот / Фосфор / Мышьяк",
-            elements: ["N", "P", "As"],
-            keywords: ["азот", "nitrogen", "фосфор", "phosphorus", "мышьяк", "arsenic", "мочевина", "аммиак", "нитрат", "фосфат", "нитрид", "фосфин", "no2", "h3po4"]
-        },
-        O: {
-            name: "Кислород / Сера / Селен",
-            elements: ["O", "S", "Se"],
-            keywords: ["кислород", "oxygen", "сера", "sulfur", "селен", "selenium", "оксид", "сульфид", "сульфат", "озон", "h2so4", "so2"]
-        },
-        Al: {
-            name: "Алюминий / Галлий / Индий / Таллий",
-            elements: ["Al", "Ga", "In", "Tl"],
-            keywords: ["алюминий", "aluminium", "галлия", "gallium", "индий", "indium", "таллий", "thallium", "al2o3", "al(oh)3", "кварц", "глинозем"]
-        },
-        Hal: {
-            name: "Галогены",
-            elements: ["F", "Cl", "Br", "I"],
-            keywords: ["фтор", "fluorine", "хлор", "chlorine", "бром", "bromine", "йод", "iodine", "галоген", "фторид", "хлорид", "бромид", "иодид"]
-        },
-        alkali: {
-            name: "Щелочные металлы",
-            elements: ["Li", "Na", "K", "Rb", "Cs"],
-            keywords: ["литий", "lithium", "натрий", "sodium", "калий", "potassium", "рубидий", "цезий", "щелочной металл", "naoh", "koh"]
-        },
-        alkaline: {
-            name: "Щёлочноземельные",
-            elements: ["Be", "Mg", "Ca", "Sr", "Ba"],
-            keywords: ["бериллий", "магний", "magnesium", "кальций", "calcium", "стронций", "барий", "barium", "mgcl2", "caco3", "bacl2", "щелочноземельный"]
-        }
+    // ==================== ПОЛНАЯ БАЗА ГРУПП ЭЛЕМЕНТОВ ====================
+    const groupDatabase = {
+        "1": { name: "Щелочные металлы", elements: ["H","Li","Na","K","Rb","Cs","Fr"], 
+               keywords: ["водород","литий","натрий","калий","рубидий","цезий","франций","щелочной металл","naoh","koh","щелочь","гидроксид"] },
+        "2": { name: "Щёлочноземельные", elements: ["Be","Mg","Ca","Sr","Ba","Ra"], 
+               keywords: ["бериллий","магний","кальций","стронций","барий","радий","щелочноземельный","cao","mgo","bacl2","caco3"] },
+        "13": { name: "Борная группа", elements: ["B","Al","Ga","In","Tl"], 
+                keywords: ["бор","алюминий","галлий","индий","таллий","al2o3","al(oh)3","галлий","индий"] },
+        "14": { name: "Углеродная группа", elements: ["C","Si","Ge","Sn","Pb"], 
+                keywords: ["углерод","кремний","германий","олово","свинец","carbon","silicon","цианамид","циановая","цианид","дициан","cn-","hcn","co2","sio2","карбид","силикат"] },
+        "15": { name: "Азотная группа", elements: ["N","P","As","Sb","Bi"], 
+                keywords: ["азот","фосфор","мышьяк","сурьма","висмут","nitrogen","phosphorus","мочевина","аммиак","нитрат","фосфат","нитрид","фосфин"] },
+        "16": { name: "Кислородная группа", elements: ["O","S","Se","Te","Po"], 
+                keywords: ["кислород","сера","селен","теллур","полоний","oxygen","sulfur","оксид","сульфид","сульфат","озон","h2so4","so2"] },
+        "17": { name: "Галогены", elements: ["F","Cl","Br","I","At"], 
+                keywords: ["фтор","хлор","бром","йод","астат","галоген","фторид","хлорид","бромид","иодид","fluorine","chlorine","bromine","iodine"] },
+        "18": { name: "Инертные газы", elements: ["He","Ne","Ar","Kr","Xe","Rn"], 
+                keywords: ["гелий","неон","аргон","криптон","ксенон","радон","инертный газ","благородный газ"] },
+        "3": { name: "Скандиевая группа", elements: ["Sc","Y","La","Ac"], 
+               keywords: ["скандий","иттрий","лантан","актиний","scandium","yttrium"] },
+        "4": { name: "Титановая группа", elements: ["Ti","Zr","Hf","Rf"], 
+               keywords: ["титан","цирконий","гафний","titanium","zirconium"] },
+        "5": { name: "Ванадиевая группа", elements: ["V","Nb","Ta","Db"], 
+               keywords: ["ванадий","ниобий","тантал","vanadium","niobium"] },
+        "6": { name: "Хромовая группа", elements: ["Cr","Mo","W","Sg"], 
+               keywords: ["хром","молибден","вольфрам","chromium","molybdenum","tungsten"] },
+        "7": { name: "Марганцевая группа", elements: ["Mn","Tc","Re","Bh"], 
+               keywords: ["марганец","технеций","рений","manganese"] },
+        "8": { name: "Железная группа", elements: ["Fe","Ru","Os","Hs"], 
+               keywords: ["железо","рутений","осмий","iron","ruthenium","osmium"] },
+        "9": { name: "Кобальтовая группа", elements: ["Co","Rh","Ir","Mt"], 
+               keywords: ["кобальт","родий","иридий","cobalt","rhodium"] },
+        "10": { name: "Никелевая группа", elements: ["Ni","Pd","Pt","Ds"], 
+                keywords: ["никель","палладий","платина","nickel","palladium","platinum"] },
+        "11": { name: "Медная группа", elements: ["Cu","Ag","Au","Rg"], 
+                keywords: ["медь","серебро","золото","copper","silver","gold","argentum","аурум"] },
+        "12": { name: "Цинковая группа", elements: ["Zn","Cd","Hg","Cn"], 
+                keywords: ["цинк","кадмий","ртуть","zinc","cadmium","mercury"] },
+        "lan": { name: "Лантаноиды", elements: ["La","Ce","Pr","Nd","Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb","Lu"],
+                 keywords: ["лантан","церий","празеодим","неодим","прометий","самарий","европий","гадолиний","тербий","диспрозий","гольмий","эрбий","тулий","иттербий","лютеций","лантаноид"] },
+        "act": { name: "Актиноиды", elements: ["Ac","Th","Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm","Md","No","Lr"],
+                 keywords: ["актиний","торий","протактиний","уран","нептуний","плутоний","америций","кюрий","берклий","калифорний","актиноид"] }
     };
 
-    // Функция определения группы по тексту (если выбрано "auto")
-    function detectGroupFromQuestion(text) {
+    // Определение группы по тексту (авто-режим)
+    function detectGroupFromText(text) {
         if (!text) return null;
         const lower = text.toLowerCase();
         let bestGroup = null;
         let maxScore = 0;
-        for (let [groupId, group] of Object.entries(groups)) {
+        for (let [groupId, group] of Object.entries(groupDatabase)) {
             let score = 0;
             for (let kw of group.keywords) {
                 if (lower.includes(kw.toLowerCase())) {
-                    score += kw.length + 5;
+                    score += kw.length + 3;
                 }
-            }
-            // дополнительные маркеры
-            if (lower.includes("цианамид") || lower.includes("циановая") || lower.includes("дициан")) {
-                if (groupId === "C") score += 50;
-            }
-            if (lower.includes("мочевина") || lower.includes("аммиак")) {
-                if (groupId === "N") score += 40;
-            }
-            if (lower.includes("галоген")) {
-                if (groupId === "Hal") score += 60;
-            }
-            if (lower.includes("щелочной металл")) {
-                if (groupId === "alkali") score += 60;
             }
             if (score > maxScore) {
                 maxScore = score;
@@ -249,88 +254,65 @@
         return bestGroup;
     }
 
-    // Выбор конкретного элемента внутри группы (по умолчанию первый, но можно уточнять)
-    function selectElementFromGroup(groupId, text) {
-        if (!groupId || !groups[groupId]) return "?";
-        const group = groups[groupId];
-        if (group.elements.length === 1) return group.elements[0];
-        
+    // Выбор конкретного элемента в группе
+    function selectElement(groupId, text) {
+        if (!groupId || !groupDatabase[groupId]) return "?";
+        const group = groupDatabase[groupId];
         const lower = text.toLowerCase();
-        // ищем явное название элемента
+        
+        const elementNames = {
+            "H":"водород","He":"гелий","Li":"литий","Be":"бериллий","B":"бор","C":"углерод","N":"азот","O":"кислород","F":"фтор","Ne":"неон",
+            "Na":"натрий","Mg":"магний","Al":"алюминий","Si":"кремний","P":"фосфор","S":"сера","Cl":"хлор","Ar":"аргон","K":"калий","Ca":"кальций",
+            "Sc":"скандий","Ti":"титан","V":"ванадий","Cr":"хром","Mn":"марганец","Fe":"железо","Co":"кобальт","Ni":"никель","Cu":"медь","Zn":"цинк",
+            "Ga":"галлий","Ge":"германий","As":"мышьяк","Se":"селен","Br":"бром","Kr":"криптон","Rb":"рубидий","Sr":"стронций","Y":"иттрий","Zr":"цирконий",
+            "Nb":"ниобий","Mo":"молибден","Tc":"технеций","Ru":"рутений","Rh":"родий","Pd":"палладий","Ag":"серебро","Cd":"кадмий","In":"индий","Sn":"олово",
+            "Sb":"сурьма","Te":"теллур","I":"йод","Xe":"ксенон","Cs":"цезий","Ba":"барий","La":"лантан","Ce":"церий","Pr":"празеодим","Nd":"неодим",
+            "Pm":"прометий","Sm":"самарий","Eu":"европий","Gd":"гадолиний","Tb":"тербий","Dy":"диспрозий","Ho":"гольмий","Er":"эрбий","Tm":"тулий","Yb":"иттербий",
+            "Lu":"лютеций","Hf":"гафний","Ta":"тантал","W":"вольфрам","Re":"рений","Os":"осмий","Ir":"иридий","Pt":"платина","Au":"золото","Hg":"ртуть",
+            "Tl":"таллий","Pb":"свинец","Bi":"висмут","Po":"полоний","At":"астат","Rn":"радон","Fr":"франций","Ra":"радий","Ac":"актиний","Th":"торий",
+            "Pa":"протактиний","U":"уран","Np":"нептуний","Pu":"плутоний","Am":"америций","Cm":"кюрий","Bk":"берклий","Cf":"калифорний","Es":"эйнштейний","Fm":"фермий",
+            "Md":"менделевий","No":"нобелий","Lr":"лоуренсий"
+        };
+        
         for (let elem of group.elements) {
-            const elemNames = {
-                "C": ["углерод", "carbon"],
-                "Si": ["кремний", "silicon"],
-                "N": ["азот", "nitrogen"],
-                "P": ["фосфор", "phosphorus"],
-                "As": ["мышьяк", "arsenic"],
-                "O": ["кислород", "oxygen"],
-                "S": ["сера", "sulfur"],
-                "Se": ["селен", "selenium"],
-                "Al": ["алюминий", "aluminium"],
-                "Ga": ["галлий", "gallium"],
-                "In": ["индий", "indium"],
-                "Tl": ["таллий", "thallium"],
-                "F": ["фтор", "fluorine"],
-                "Cl": ["хлор", "chlorine"],
-                "Br": ["бром", "bromine"],
-                "I": ["йод", "iodine"],
-                "Li": ["литий", "lithium"],
-                "Na": ["натрий", "sodium"],
-                "K": ["калий", "potassium"],
-                "Rb": ["рубидий", "rubidium"],
-                "Cs": ["цезий", "cesium"],
-                "Be": ["бериллий", "beryllium"],
-                "Mg": ["магний", "magnesium"],
-                "Ca": ["кальций", "calcium"],
-                "Sr": ["стронций", "strontium"],
-                "Ba": ["барий", "barium"]
-            };
-            for (let name of (elemNames[elem] || [])) {
-                if (lower.includes(name.toLowerCase())) {
-                    return elem;
-                }
+            if (elementNames[elem] && lower.includes(elementNames[elem].toLowerCase())) {
+                return elem;
             }
         }
-        // если не нашли — возвращаем элемент по умолчанию (первый в группе)
         return group.elements[0];
     }
 
-    // Главный детектор
     function detectElement(question, forcedGroup) {
         if (!question || question.trim() === "") return "?";
         let groupId = forcedGroup;
         if (!groupId || groupId === "auto") {
-            groupId = detectGroupFromQuestion(question);
+            groupId = detectGroupFromText(question);
         }
-        if (!groupId || !groups[groupId]) {
-            // fallback: попробуем найти любой элемент
-            return "?";
-        }
-        return selectElementFromGroup(groupId, question);
+        if (!groupId || !groupDatabase[groupId]) return "?";
+        return selectElement(groupId, question);
     }
 
-    // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
-    let excelRows = [];
-    let questionColumn = 0;
-    let classifiedList = [];
+    // Глобальные переменные
+    let sheetData = [];
+    let questionColIdx = 0;
+    let classifiedItems = [];
 
-    // DOM
-    const fileInput = document.getElementById('excelInput');
-    const selectBtn = document.getElementById('selectFileBtn');
-    const dropZone = document.getElementById('dropZone');
-    const fileStatus = document.getElementById('fileStatus');
-    const colSelect = document.getElementById('colSelect');
-    const groupSelect = document.getElementById('groupSelect');
-    const classifyBtn = document.getElementById('classifyBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const resultBody = document.getElementById('resultBody');
-    const statsText = document.getElementById('statsText');
+    // DOM элементы
+    const fileSelector = document.getElementById('fileSelector');
+    const uploadButton = document.getElementById('uploadButton');
+    const uploadArea = document.getElementById('uploadArea');
+    const statusMsg = document.getElementById('statusMsg');
+    const columnPicker = document.getElementById('columnPicker');
+    const groupPicker = document.getElementById('groupPicker');
+    const startClassify = document.getElementById('startClassify');
+    const exportExcel = document.getElementById('exportExcel');
+    const tableResults = document.getElementById('tableResults');
+    const resultStats = document.getElementById('resultStats');
 
-    // Загрузка Excel (надёжная)
-    function loadExcel(file) {
+    // ЗАГРУЗКА ФАЙЛА (максимально простая)
+    function processFile(file) {
         if (!file) return;
-        fileStatus.innerHTML = `<i class="fas fa-spinner fa-pulse"></i> Чтение ${file.name}...`;
+        statusMsg.innerHTML = `<i class="fas fa-spinner fa-pulse"></i> Чтение ${file.name}...`;
         const reader = new FileReader();
         reader.onload = function(e) {
             try {
@@ -339,113 +321,113 @@
                 const sheet = workbook.Sheets[workbook.SheetNames[0]];
                 const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
                 if (!rows || rows.length === 0) throw new Error("Файл пуст");
-                excelRows = rows;
-                fileStatus.innerHTML = `<i class="fas fa-check-circle text-success"></i> Загружено: ${rows.length} строк`;
+                sheetData = rows;
+                statusMsg.innerHTML = `<i class="fas fa-check-circle text-success"></i> Загружено: ${rows.length} строк`;
                 
                 // Заполнение выбора столбцов
                 const maxCols = rows[0] ? rows[0].length : 0;
-                colSelect.innerHTML = '<option value="auto">🧠 Автовыбор (лучший)</option>';
+                columnPicker.innerHTML = '<option value="auto">🧠 Авто (рекомендуется)</option>';
                 for (let i = 0; i < maxCols; i++) {
                     let header = (rows[0][i] && rows[0][i].toString().trim()) ? rows[0][i].toString().trim() : `Столбец ${i+1}`;
                     if (header.length > 45) header = header.slice(0,42)+'...';
-                    colSelect.innerHTML += `<option value="${i}">${i+1}: ${header}</option>`;
+                    columnPicker.innerHTML += `<option value="${i}">${i+1}: ${header}</option>`;
                 }
-                colSelect.disabled = false;
-                classifyBtn.disabled = false;
-                downloadBtn.disabled = true;
+                columnPicker.disabled = false;
+                startClassify.disabled = false;
+                exportExcel.disabled = true;
                 
                 // Автоопределение столбца
-                const bestCol = findBestColumn(rows);
-                questionColumn = bestCol >= 0 ? bestCol : 0;
-                if (bestCol >= 0) colSelect.value = bestCol.toString();
-                else colSelect.value = "auto";
+                const bestCol = autoDetectColumn(rows);
+                questionColIdx = bestCol >= 0 ? bestCol : 0;
+                if (bestCol >= 0) columnPicker.value = bestCol.toString();
+                else columnPicker.value = "auto";
                 
-                renderPreview();
-                statsText.innerText = "Готов к анализу";
+                showPreview();
+                resultStats.innerText = "Загружено, нажмите 'Анализ'";
             } catch(err) {
-                fileStatus.innerHTML = `<span class="text-danger">Ошибка: ${err.message}</span>`;
-                excelRows = [];
-                classifyBtn.disabled = true;
+                statusMsg.innerHTML = `<span class="text-danger">Ошибка: ${err.message}</span>`;
+                sheetData = [];
+                startClassify.disabled = true;
             }
         };
-        reader.onerror = () => fileStatus.innerHTML = '<span class="text-danger">Ошибка чтения файла</span>';
+        reader.onerror = () => statusMsg.innerHTML = '<span class="text-danger">Ошибка чтения</span>';
         reader.readAsArrayBuffer(file);
     }
 
-    function findBestColumn(rows) {
+    function autoDetectColumn(rows) {
         if (!rows.length) return 0;
         const colCount = rows[0] ? rows[0].length : 1;
-        let bestIdx = 0, bestScore = -1;
-        for (let col = 0; col < colCount; col++) {
+        let best = 0, bestScore = -1;
+        for (let c = 0; c < colCount; c++) {
             let score = 0;
-            for (let r = 0; r < Math.min(rows.length, 60); r++) {
-                let cell = rows[r][col];
+            for (let r = 0; r < Math.min(rows.length, 50); r++) {
+                let cell = rows[r][c];
                 if (cell && typeof cell === 'string' && cell.trim().length > 8) {
                     score += 2;
                     let low = cell.toLowerCase();
-                    if (low.includes("цианамид") || low.includes("кислота") || low.includes("реакция")) score += 5;
-                    if (low.includes("элемент") || low.includes("свойства")) score += 3;
+                    if (low.includes("какой") || low.includes("элемент") || low.includes("свойства")) score += 5;
+                    if (low.includes("реакция") || low.includes("вопрос")) score += 3;
                 }
             }
-            if (score > bestScore) { bestScore = score; bestIdx = col; }
+            if (score > bestScore) { bestScore = score; best = c; }
         }
-        return bestIdx;
+        return best;
     }
 
-    function renderPreview() {
-        if (!excelRows.length) return;
-        let col = questionColumn;
+    function showPreview() {
+        if (!sheetData.length) return;
+        let col = questionColIdx;
         let html = '';
-        for (let i = 0; i < Math.min(excelRows.length, 300); i++) {
-            let q = (excelRows[i][col] != null) ? String(excelRows[i][col]) : "";
+        for (let i = 0; i < Math.min(sheetData.length, 300); i++) {
+            let q = (sheetData[i][col] != null) ? String(sheetData[i][col]) : "";
             let short = q.length > 110 ? q.slice(0,107)+'…' : (q || "—");
             html += `<tr><td class="text-center"><span class="elem-badge bg-secondary">?</span></td><td class="text-light">${escapeHtml(short)}</td></tr>`;
         }
-        resultBody.innerHTML = html || `<tr><td colspan="2" class="text-center">Нет данных</td></tr>`;
+        tableResults.innerHTML = html || `<tr><td colspan="2" class="text-center">Нет данных</td></tr>`;
     }
 
     // КЛАССИФИКАЦИЯ
     function runClassification() {
-        if (!excelRows.length) { alert("Сначала загрузите файл!"); return; }
+        if (!sheetData.length) { alert("Загрузите файл!"); return; }
         
-        let colVal = colSelect.value;
-        let targetCol = (colVal === "auto") ? findBestColumn(excelRows) : parseInt(colVal, 10);
+        let colVal = columnPicker.value;
+        let targetCol = (colVal === "auto") ? autoDetectColumn(sheetData) : parseInt(colVal, 10);
         if (isNaN(targetCol)) targetCol = 0;
-        questionColumn = targetCol;
+        questionColIdx = targetCol;
         
-        let selectedGroup = groupSelect.value;
-        let detectedCount = 0;
+        let selectedGroup = groupPicker.value;
+        let detected = 0;
         let htmlRows = '';
-        classifiedList = [];
+        classifiedItems = [];
         
-        for (let i = 0; i < excelRows.length; i++) {
-            let question = (excelRows[i][targetCol] != null) ? String(excelRows[i][targetCol]) : "";
+        for (let i = 0; i < sheetData.length; i++) {
+            let question = (sheetData[i][targetCol] != null) ? String(sheetData[i][targetCol]) : "";
             let element = detectElement(question, selectedGroup);
-            if (element !== "?") detectedCount++;
-            classifiedList.push({ element: element, question: question });
+            if (element !== "?") detected++;
+            classifiedItems.push({ element: element, question: question });
             let shortQ = question.length > 115 ? question.slice(0,112)+'…' : (question || "(пусто)");
             htmlRows += `<tr>
                             <td class="text-center"><span class="elem-badge">${escapeHtml(element)}</span></td>
                             <td class="text-light">${escapeHtml(shortQ)}</td>
                          </tr>`;
         }
-        resultBody.innerHTML = htmlRows;
-        let percent = excelRows.length ? Math.round((detectedCount / excelRows.length) * 100) : 0;
-        statsText.innerHTML = `🎯 определено: ${detectedCount} / ${excelRows.length} (${percent}%)`;
-        downloadBtn.disabled = false;
+        tableResults.innerHTML = htmlRows;
+        let percent = sheetData.length ? Math.round((detected / sheetData.length) * 100) : 0;
+        resultStats.innerHTML = `🎯 Определено: ${detected} / ${sheetData.length} (${percent}%)`;
+        exportExcel.disabled = false;
     }
 
-    // Скачивание
-    function downloadExcel() {
-        if (!classifiedList.length) { alert("Нет данных для скачивания"); return; }
+    // ЭКСПОРТ
+    function exportToExcel() {
+        if (!classifiedItems.length) { alert("Нет данных для экспорта"); return; }
         const excelData = [["Химический элемент (символ)", "Текст вопроса"]];
-        for (let item of classifiedList) {
+        for (let item of classifiedItems) {
             excelData.push([item.element, item.question]);
         }
         const ws = XLSX.utils.aoa_to_sheet(excelData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Классификация");
-        XLSX.writeFile(wb, `хим_группы_${new Date().toISOString().slice(0,19)}.xlsx`);
+        XLSX.writeFile(wb, `хим_классификация_${new Date().toISOString().slice(0,19)}.xlsx`);
     }
 
     function escapeHtml(str) {
@@ -453,27 +435,31 @@
         return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;'));
     }
 
-    // ========== СОБЫТИЯ ==========
-    selectBtn.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => { if (e.target.files.length) loadExcel(e.target.files[0]); });
-    
-    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#33ffbb'; });
-    dropZone.addEventListener('dragleave', () => dropZone.style.borderColor = '#00c896');
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = '#00c896';
-        if (e.dataTransfer.files.length) loadExcel(e.dataTransfer.files[0]);
+    // СОБЫТИЯ (простые и надёжные)
+    uploadButton.addEventListener('click', function() {
+        fileSelector.click();
     });
     
-    classifyBtn.addEventListener('click', runClassification);
-    downloadBtn.addEventListener('click', downloadExcel);
+    uploadArea.addEventListener('click', function(e) {
+        if (e.target === uploadArea || uploadArea.contains(e.target) && e.target !== uploadButton) {
+            fileSelector.click();
+        }
+    });
     
-    // Инициализация
-    colSelect.disabled = true;
-    classifyBtn.disabled = true;
-    downloadBtn.disabled = true;
-    fileStatus.innerHTML = '<span class="text-secondary">Ожидание файла...</span>';
+    fileSelector.addEventListener('change', function(e) {
+        if (e.target.files && e.target.files.length > 0) {
+            processFile(e.target.files[0]);
+        }
+    });
+    
+    startClassify.addEventListener('click', runClassification);
+    exportExcel.addEventListener('click', exportToExcel);
+    
+    // Начальное состояние
+    columnPicker.disabled = true;
+    startClassify.disabled = true;
+    exportExcel.disabled = true;
+    statusMsg.innerHTML = '<span class="text-secondary">Ожидание файла...</span>';
 </script>
 </body>
 </html>
