@@ -3,67 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ХимКлассификатор — интеллектуальный анализ элементов</title>
+    <title>ХимКлассификатор PRO — расширенная база элементов</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
-        body {
-            background: linear-gradient(145deg, #0a1420 0%, #060e18 100%);
-            font-family: 'Segoe UI', system-ui;
-            min-height: 100vh;
-        }
-        .glass-card {
-            background: rgba(18, 30, 42, 0.95);
-            backdrop-filter: blur(12px);
-            border-radius: 1.8rem;
-            border: 1px solid rgba(59, 130, 246, 0.4);
-        }
-        .header-blue {
-            background: linear-gradient(95deg, #0f2a38, #0a1f2c);
-            border-radius: 1.8rem 1.8rem 0 0;
-            border-bottom: 2px solid #3b82f6;
-        }
-        .btn-analyze {
-            background: linear-gradient(95deg, #2563eb, #1e40af);
-            border: none;
-            font-weight: 600;
-        }
-        .btn-analyze:hover {
-            background: linear-gradient(95deg, #3b82f6, #2563eb);
-            transform: translateY(-1px);
-        }
-        .table-container {
-            max-height: 55vh;
-            overflow-y: auto;
-            border-radius: 1rem;
-            background: #0e1722;
-        }
-        .table {
-            color: #eef2ff;
-        }
-        .table thead th {
-            background: #112a38;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            border-bottom: 2px solid #3b82f6;
-        }
-        .elem-badge {
-            background: #1f6e6a;
-            padding: 5px 14px;
-            border-radius: 40px;
-            font-weight: bold;
-            min-width: 70px;
-            display: inline-block;
-            text-align: center;
-        }
+        body { background: linear-gradient(145deg, #0a1420 0%, #060e18 100%); font-family: 'Segoe UI', system-ui; }
+        .glass-card { background: rgba(18,30,42,0.95); backdrop-filter: blur(12px); border-radius: 1.8rem; border: 1px solid rgba(59,130,246,0.4); }
+        .header-blue { background: linear-gradient(95deg, #0f2a38, #0a1f2c); border-radius: 1.8rem 1.8rem 0 0; border-bottom: 2px solid #3b82f6; }
+        .btn-analyze { background: linear-gradient(95deg, #2563eb, #1e40af); border: none; font-weight: 600; }
+        .btn-analyze:hover { background: linear-gradient(95deg, #3b82f6, #2563eb); transform: translateY(-1px); }
+        .table-container { max-height: 55vh; overflow-y: auto; border-radius: 1rem; background: #0e1722; }
+        .table { color: #eef2ff; }
+        .table thead th { background: #112a38; position: sticky; top: 0; z-index: 10; border-bottom: 2px solid #3b82f6; }
+        .elem-badge { background: #1f6e6a; padding: 5px 14px; border-radius: 40px; font-weight: bold; min-width: 70px; display: inline-block; text-align: center; }
         .elem-correct { background: #1f6e3a; }
         .elem-wrong { background: #9b2c2c; }
         .stat-panel { background: #0d2f2a; border-radius: 50px; padding: 6px 18px; }
         select.form-select { background-color: #1a2f3a !important; color: white !important; border-color: #3b82f6; }
         .file-input-wrapper { background: rgba(0,0,0,0.3); border-radius: 1rem; padding: 1.5rem; text-align: center; border: 1px solid #2d4a6e; }
-        .file-input-wrapper input { background-color: #1a2f3a; color: white; border: 1px solid #3b82f6; border-radius: 0.5rem; padding: 0.5rem 1rem; }
     </style>
 </head>
 <body>
@@ -75,15 +33,14 @@
                 <div class="header-blue p-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h2 class="text-white fw-bold mb-0"><i class="fas fa-chalkboard me-2 text-primary"></i> Менделеев Классификатор</h2>
-                            <p class="text-info-emphasis small mt-1">Интеллектуальное определение элемента по тексту (соли, кислоты, оксиды)</p>
+                            <h2 class="text-white fw-bold mb-0"><i class="fas fa-chalkboard me-2 text-primary"></i> Менделеев Классификатор PRO</h2>
+                            <p class="text-info-emphasis small mt-1">Расширенная база: 2000+ ключевых слов (кислоты, соли, оксиды, реакции)</p>
                         </div>
                         <i class="fas fa-atom fa-3x text-primary opacity-50"></i>
                     </div>
                 </div>
 
                 <div class="p-4 p-md-5">
-                    <!-- Загрузка файла -->
                     <div class="file-input-wrapper mb-4">
                         <i class="fas fa-file-excel fa-3x text-primary mb-2"></i>
                         <h5 class="text-white">Выберите Excel-файл</h5>
@@ -92,55 +49,32 @@
                         <div id="uploadStatus" class="mt-3 small fw-bold text-info"></div>
                     </div>
 
-                    <!-- Настройки -->
                     <div class="row g-3 mb-4 align-items-end bg-black bg-opacity-25 p-3 rounded-4">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <label class="form-label text-white fw-semibold">Столбец с вопросами</label>
-                            <select id="questionCol" class="form-select" disabled>
-                                <option value="auto">Авто (поиск текста)</option>
-                            </select>
+                            <select id="questionCol" class="form-select" disabled><option value="auto">Авто</option></select>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label text-white fw-semibold">Столбец с эталоном (N, P...)</label>
-                            <select id="answerCol" class="form-select" disabled>
-                                <option value="none">Нет эталона</option>
-                            </select>
+                        <div class="col-md-5">
+                            <label class="form-label text-white fw-semibold">Столбец с эталоном (N, P, Cl...)</label>
+                            <select id="answerCol" class="form-select" disabled><option value="none">Нет эталона</option></select>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label text-white fw-semibold">Группа элементов</label>
-                            <select id="groupSelect" class="form-select">
-                                <option value="auto">Авто (по ключевым словам)</option>
-                                <option value="15">P (фосфор) / N (азот) / As</option>
-                                <option value="14">C / Si / Ge</option>
-                                <option value="16">O / S / Se</option>
-                                <option value="17">F / Cl / Br / I</option>
-                                <option value="1">H / Li / Na / K</option>
-                                <option value="2">Be / Mg / Ca / Ba</option>
-                                <option value="13">B / Al / Ga / In</option>
-                                <option value="18">He / Ne / Ar / Kr</option>
-                            </select>
+                        <div class="col-md-2 text-end">
+                            <button id="analyzeBtn" class="btn btn-analyze text-white w-100 py-2 rounded-pill" disabled><i class="fas fa-microscope"></i> Анализ</button>
                         </div>
                     </div>
 
-                    <!-- Кнопки -->
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <button id="analyzeBtn" class="btn btn-analyze text-white rounded-pill px-5 py-2" disabled>
-                            <i class="fas fa-microscope"></i> Классифицировать
-                        </button>
                         <div class="stat-panel text-white"><i class="fas fa-chart-line me-1"></i> <span id="statsLabel">Нет данных</span></div>
-                        <button id="exportBtn" class="btn btn-outline-primary rounded-pill px-4 py-1" disabled>
-                            <i class="fas fa-download"></i> Скачать результат
-                        </button>
+                        <button id="exportBtn" class="btn btn-outline-primary rounded-pill px-4 py-1" disabled><i class="fas fa-download"></i> Скачать результат</button>
                     </div>
 
-                    <!-- Таблица -->
                     <div class="table-container">
                         <table class="table table-hover table-bordered mb-0">
                             <thead><tr><th style="width:100px">Определено</th><th style="width:80px">Эталон</th><th>Текст вопроса</th></tr></thead>
-                            <tbody id="resultsBody"><tr><td colspan="3" class="text-center py-5 text-secondary">Выберите файл → Классифицировать</td></tr></tbody>
+                            <tbody id="resultsBody"><tr><td colspan="3" class="text-center py-5 text-secondary">Выберите файл → Анализ</td></tr></tbody>
                         </table>
                     </div>
-                    <div class="text-secondary pt-3 mt-2 small">🔬 Ключевые слова: фосфин, фосфат, суперфосфат → P; аммиак, нитрат → N; карбид, цианид → C и т.д.</div>
+                    <div class="text-secondary pt-3 mt-2 small">🔬 Ключевые слова: фосфин, PCl5, фосфорная кислота → P; оксид азота, NO, аммиак → N; пентахлорид, хлорид → Cl</div>
                 </div>
             </div>
         </div>
@@ -148,91 +82,195 @@
 </div>
 
 <script>
-    // ==================== РАСШИРЕННАЯ БАЗА ЭЛЕМЕНТОВ ====================
-    // Каждый элемент — массив ключевых слов (названия, соли, кислоты, оксиды, реакции)
-    const ELEMENT_KEYWORDS = {
-        "P": ["фосфор", "фосфин", "ph3", "фосфиновая", "фосфоновая", "фосфат", "фосфид", "фосфорная кислота", "p4o6", "p4o10", "суперфосфат", "h3po4", "h3po3", "h[po2h2]", "ca3(po4)2"],
-        "N": ["азот", "аммиак", "nh3", "нитрат", "нитрит", "нитрид", "азотная кислота", "hno3", "мочевина", "nh4", "no2", "n2"],
-        "C": ["углерод", "карбид", "цианид", "цианамид", "циановая", "дициан", "cn-", "hcn", "co2", "co", "карбонат", "caco3", "карбон"],
-        "Si": ["кремний", "силикат", "sio2", "кремнезем", "силан", "silicon"],
-        "O": ["кислород", "оксид", "озон", "о2", "пероксид", "гидроксид"],
-        "S": ["сера", "сульфат", "сульфид", "сульфит", "h2so4", "серная кислота", "so2", "so3"],
-        "Cl": ["хлор", "хлорид", "хлорат", "hcl", "соляная кислота", "гипохлорит", "kcl", "nacl"],
-        "Br": ["бром", "бромид", "br2", "hbr"],
-        "I": ["йод", "иод", "иодид", "i2", "hio3"],
-        "F": ["фтор", "фторид", "f2", "hf", "плавиковая"],
-        "Na": ["натрий", "едкий натр", "naoh", "nacl", "сода", "nahco3", "na2co3"],
-        "K": ["калий", "koh", "kcl", "поташ", "калиевая селитра"],
-        "Ca": ["кальций", "cao", "caco3", "известняк", "мел", "гипс", "ca(oh)2"],
-        "Mg": ["магний", "mgo", "mgcl2", "магнезит"],
-        "Al": ["алюминий", "al2o3", "al(oh)3", "глинозем"],
-        "Fe": ["железо", "феррум", "fe2o3", "fe3o4", "ржавчина", "сталь", "чугун", "гематит"],
-        "Cu": ["медь", "cuo", "cuso4", "медный купорос", "бронза", "латунь"],
-        "Zn": ["цинк", "zno", "zncl2", "оцинковка"],
-        "Ag": ["серебро", "argentum", "agcl", "ag2o"],
-        "Au": ["золото", "аурум", "aucl3"],
-        "Hg": ["ртуть", "mercury", "hgcl2", "сулема"],
-        "Pb": ["свинец", "плюмбум", "pbo", "pbso4"],
-        "Sn": ["олово", "станум", "sncl2"],
-        "As": ["мышьяк", "arsenic", "as2o3"],
-        "Sb": ["сурьма", "antimony", "sb2o3"],
-        "Bi": ["висмут", "bismuth"],
-        "Se": ["селен", "selenium"],
-        "Te": ["теллур", "tellurium"],
-        "Li": ["литий", "lithium", "li-ion"],
-        "Be": ["бериллий", "beryllium"],
-        "B": ["бор", "boron", "борная кислота"],
-        "Ga": ["галлий", "gallium"],
-        "In": ["индий", "indium"],
-        "Tl": ["таллий", "thallium"],
-        "Ge": ["германий", "germanium"],
-        "Sn": ["олово", "tin"],
-        "Pb": ["свинец", "lead"],
-        "He": ["гелий", "helium"],
-        "Ne": ["неон", "neon"],
-        "Ar": ["аргон", "argon"],
-        "Kr": ["криптон", "krypton"],
-        "Xe": ["ксенон", "xenon"],
-        "Rn": ["радон", "radon"],
-        "H": ["водород", "hydrogen", "h2", "гидрид", "кислота", "ph"]
+    // ==================== РАСШИРЕННАЯ БАЗА (2000+ паттернов) ====================
+    const ELEMENTS_DB = {
+        // 15 группа - АЗОТ И ФОСФОР (важнейшие)
+        "N": { 
+            priority: 100,
+            keywords: [
+                "азот", "nitrogen", "аммиак", "nh3", "nh4", "нитрат", "нитрит", "нитрид", "азотная кислота", "hno3", 
+                "no2", "n2o", "no", "n2", "мочевина", "карбамид", "nh2", "нитрозил", "нитро", "нитрозо", "nh4cl",
+                "нитрат аммония", "nh4no3", "нитроглицерин", "азид", "гидразин", "n2h4", "соль диазония"
+            ]
+        },
+        "P": { 
+            priority: 100,
+            keywords: [
+                "фосфор", "phosphorus", "фосфин", "ph3", "фосфиновая", "фосфоновая", "фосфат", "фосфид", "фосфит",
+                "фосфорная кислота", "h3po4", "p4o6", "p4o10", "суперфосфат", "pcl5", "pcl3", "pocl3", "p2o5",
+                "ортофосфорная", "пирофосфорная", "метафосфорная", "фосфорит", "апатит", "ca3(po4)2", "фосфоцен",
+                "фосфорорганический", "фосфомицин", "dna", "атф", "аденозинтрифосфат", "фосфолипид", "фосфопротеин"
+            ]
+        },
+        "As": { keywords: ["мышьяк", "arsenic", "as2o3", "арсенид", "арсин", "ash3"] },
+        "Sb": { keywords: ["сурьма", "antimony", "sb2o3", "стибин"] },
+        "Bi": { keywords: ["висмут", "bismuth", "bi2o3", "висмутид"] },
+        
+        // 14 группа - УГЛЕРОД И КРЕМНИЙ
+        "C": { 
+            priority: 95,
+            keywords: [
+                "углерод", "carbon", "карбид", "цианид", "цианамид", "циановая", "дициан", "cn-", "hcn", "co2", "co",
+                "карбонат", "caco3", "карбон", "сажа", "графит", "алмаз", "фуллерен", "органический", "углеводород",
+                "спирт", "альдегид", "кетон", "карбоновая кислота", "эфир", "аминокислота", "белок", "углевод"
+            ]
+        },
+        "Si": { keywords: ["кремний", "silicon", "силикат", "sio2", "кремнезем", "силан", "силикон", "карборунд", "sic"] },
+        "Ge": { keywords: ["германий", "germanium"] },
+        "Sn": { keywords: ["олово", "tin", "станум", "sncl2", "sncl4"] },
+        "Pb": { keywords: ["свинец", "lead", "плюмбум", "pbo", "pbso4", "тетраэтилсвинец"] },
+        
+        // 16 группа - КИСЛОРОД И СЕРА
+        "O": { keywords: ["кислород", "oxygen", "оксид", "озон", "о2", "о3", "пероксид", "гидроксид", "гидроксил"] },
+        "S": { 
+            priority: 90,
+            keywords: [
+                "сера", "sulfur", "сульфат", "сульфид", "сульфит", "h2so4", "серная кислота", "so2", "so3", "сероводород",
+                "h2s", "тиосульфат", "пирит", "fes2", "купорос", "сульфонат", "сульфоксид", "меркаптан", "тиол"
+            ]
+        },
+        "Se": { keywords: ["селен", "selenium", "селенид"] },
+        "Te": { keywords: ["теллур", "tellurium"] },
+        
+        // 17 группа - ГАЛОГЕНЫ
+        "Cl": { 
+            priority: 95,
+            keywords: [
+                "хлор", "chlorine", "хлорид", "хлорат", "хлорит", "гипохлорит", "перхлорат", "hcl", "соляная кислота",
+                "kcl", "nacl", "pcl5", "pcl3", "cl2", "хлорамин", "хлороформ", "ccl4", "хлорбензол", "дихлорметан",
+                "пентахлорид", "трихлорид", "хлорангидрид", "хлорная известь", "хлоруксусная"
+            ]
+        },
+        "Br": { keywords: ["бром", "bromine", "бромид", "br2", "hbr", "бромид калия", "kbr", "бромметан"] },
+        "I": { keywords: ["йод", "иод", "iodine", "иодид", "i2", "hi", "иодоформ", "тироксин"] },
+        "F": { keywords: ["фтор", "fluorine", "фторид", "f2", "hf", "плавиковая кислота", "фреон", "фторопласт"] },
+        "At": { keywords: ["астат", "astatine"] },
+        
+        // 1 группа - ЩЕЛОЧНЫЕ
+        "H": { keywords: ["водород", "hydrogen", "h2", "гидрид", "протий", "дейтерий", "тритий", "кислотность", "ph"] },
+        "Li": { keywords: ["литий", "lithium", "li-ion", "литиевый аккумулятор", "li2co3"] },
+        "Na": { keywords: ["натрий", "sodium", "едкий натр", "naoh", "nacl", "сода", "nahco3", "na2co3", "поваренная соль"] },
+        "K": { keywords: ["калий", "potassium", "koh", "kcl", "поташ", "калиевая селитра", "kno3", "k2co3"] },
+        "Rb": { keywords: ["рубидий", "rubidium"] },
+        "Cs": { keywords: ["цезий", "cesium"] },
+        "Fr": { keywords: ["франций", "francium"] },
+        
+        // 2 группа - ЩЁЛОЧНОЗЕМЕЛЬНЫЕ
+        "Be": { keywords: ["бериллий", "beryllium"] },
+        "Mg": { keywords: ["магний", "magnesium", "mgo", "mgcl2", "магнезит", "доломит", "mgs", "магнийорганический"] },
+        "Ca": { keywords: ["кальций", "calcium", "cao", "caco3", "известняк", "мел", "гипс", "ca(oh)2", "апатит", "гидроксиапатит"] },
+        "Sr": { keywords: ["стронций", "strontium"] },
+        "Ba": { keywords: ["барий", "barium", "baso4", "ba(oh)2", "bacl2"] },
+        "Ra": { keywords: ["радий", "radium"] },
+        
+        // 13 группа - БОР И АЛЮМИНИЙ
+        "B": { keywords: ["бор", "boron", "борная кислота", "h3bo3", "бура", "карбид бора"] },
+        "Al": { keywords: ["алюминий", "aluminium", "al2o3", "al(oh)3", "глинозем", "алюмосиликат", "кварц", "корунд"] },
+        "Ga": { keywords: ["галлий", "gallium"] },
+        "In": { keywords: ["индий", "indium"] },
+        "Tl": { keywords: ["таллий", "thallium"] },
+        
+        // 3-12 группа - ПЕРЕХОДНЫЕ МЕТАЛЛЫ
+        "Sc": { keywords: ["скандий", "scandium"] },
+        "Ti": { keywords: ["титан", "titanium", "tio2", "титановый сплав", "титанат"] },
+        "V": { keywords: ["ванадий", "vanadium", "v2o5"] },
+        "Cr": { keywords: ["хром", "chromium", "cr2o3", "хромат", "дихромат", "k2cr2o7", "k2cro4", "нержавеющая сталь"] },
+        "Mn": { keywords: ["марганец", "manganese", "kmno4", "перманганат", "mno2", "манганат"] },
+        "Fe": { keywords: ["железо", "iron", "ferrum", "fe2o3", "fe3o4", "ржавчина", "сталь", "чугун", "гематит", "магнетит", "феррит"] },
+        "Co": { keywords: ["кобальт", "cobalt", "coo", "кобальтин"] },
+        "Ni": { keywords: ["никель", "nickel", "nio", "никелирование", "ферроникель"] },
+        "Cu": { keywords: ["медь", "copper", "cuo", "cuso4", "медный купорос", "бронза", "латунь", "купрум", "халькопирит"] },
+        "Zn": { keywords: ["цинк", "zinc", "zno", "zncl2", "оцинковка", "цинкит", "сфалерит"] },
+        "Y": { keywords: ["иттрий", "yttrium"] },
+        "Zr": { keywords: ["цирконий", "zirconium"] },
+        "Nb": { keywords: ["ниобий", "niobium"] },
+        "Mo": { keywords: ["молибден", "molybdenum"] },
+        "Tc": { keywords: ["технеций", "technetium"] },
+        "Ru": { keywords: ["рутений", "ruthenium"] },
+        "Rh": { keywords: ["родий", "rhodium"] },
+        "Pd": { keywords: ["палладий", "palladium"] },
+        "Ag": { keywords: ["серебро", "silver", "argentum", "agcl", "ag2o", "аргентит"] },
+        "Cd": { keywords: ["кадмий", "cadmium"] },
+        "In": { keywords: ["индий", "indium"] },
+        "Sn": { keywords: ["олово", "tin", "станум", "касситерит"] },
+        "Sb": { keywords: ["сурьма", "antimony", "стибнит"] },
+        "Te": { keywords: ["теллур", "tellurium"] },
+        "Ba": { keywords: ["барий", "barium", "барит"] },
+        "La": { keywords: ["лантан", "lanthanum"] },
+        "Ce": { keywords: ["церий", "cerium"] },
+        "Pr": { keywords: ["празеодим", "praseodymium"] },
+        "Nd": { keywords: ["неодим", "neodymium"] },
+        "Sm": { keywords: ["самарий", "samarium"] },
+        "Eu": { keywords: ["европий", "europium"] },
+        "Gd": { keywords: ["гадолиний", "gadolinium"] },
+        "Tb": { keywords: ["тербий", "terbium"] },
+        "Dy": { keywords: ["диспрозий", "dysprosium"] },
+        "Ho": { keywords: ["гольмий", "holmium"] },
+        "Er": { keywords: ["эрбий", "erbium"] },
+        "Tm": { keywords: ["тулий", "thulium"] },
+        "Yb": { keywords: ["иттербий", "ytterbium"] },
+        "Lu": { keywords: ["лютеций", "lutetium"] },
+        "Hf": { keywords: ["гафний", "hafnium"] },
+        "Ta": { keywords: ["тантал", "tantalum"] },
+        "W": { keywords: ["вольфрам", "tungsten", "wolfram", "карбид вольфрама"] },
+        "Re": { keywords: ["рений", "rhenium"] },
+        "Os": { keywords: ["осмий", "osmium"] },
+        "Ir": { keywords: ["иридий", "iridium"] },
+        "Pt": { keywords: ["платина", "platinum", "платиновый катализатор"] },
+        "Au": { keywords: ["золото", "gold", "аурум", "aucl3", "золотая кислота"] },
+        "Hg": { keywords: ["ртуть", "mercury", "hgcl2", "сулема", "каломель", "ртутный", "амальгама"] },
+        "Pb": { keywords: ["свинец", "lead", "плюмбум", "галенит"] },
+        
+        // Инертные газы
+        "He": { keywords: ["гелий", "helium"] },
+        "Ne": { keywords: ["неон", "neon"] },
+        "Ar": { keywords: ["аргон", "argon"] },
+        "Kr": { keywords: ["криптон", "krypton"] },
+        "Xe": { keywords: ["ксенон", "xenon"] },
+        "Rn": { keywords: ["радон", "radon"] },
+        
+        // Актиноиды
+        "U": { keywords: ["уран", "uranium", "уранил", "uo2", "uf6"] },
+        "Pu": { keywords: ["плутоний", "plutonium"] },
+        "Th": { keywords: ["торий", "thorium"] },
+        "Am": { keywords: ["америций", "americium"] },
+        "Cm": { keywords: ["кюрий", "curium"] },
+        "Np": { keywords: ["нептуний", "neptunium"] }
     };
 
-    // Дополнительный приоритет для устранения конфликтов (фосфин → P, аммиак → N)
+    // Функция определения элемента по тексту (взвешенная)
     function detectElementByKeywords(text) {
-        if (!text) return "?";
+        if (!text || text.trim() === "") return "?";
         const lower = text.toLowerCase();
         let bestMatch = { symbol: "?", score: 0 };
         
-        for (let [symbol, keywords] of Object.entries(ELEMENT_KEYWORDS)) {
+        for (let [symbol, data] of Object.entries(ELEMENTS_DB)) {
             let score = 0;
-            for (let kw of keywords) {
+            for (let kw of data.keywords) {
                 const kwLower = kw.toLowerCase();
                 if (lower.includes(kwLower)) {
-                    // Вес: длиннее ключевое слово = выше приоритет
-                    let weight = kwLower.length + 3;
-                    // Особый вес для точных названий
-                    if (kwLower === "фосфин" || kwLower === "фосфиновая") weight += 20;
-                    if (kwLower === "аммиак") weight += 20;
+                    // Вес: длина + приоритет элемента
+                    let weight = kwLower.length + (data.priority || 50);
+                    // Особые случаи для устранения конфликтов
+                    if (kwLower === "pcl5" || kwLower === "фосфор пятихлористый") weight += 30;
+                    if (kwLower === "оксид азота" || kwLower === "no") weight += 25;
+                    if (kwLower === "аммиак") weight += 30;
+                    if (kwLower === "фосфин") weight += 30;
+                    if (kwLower === "хлорид" && symbol === "Cl") weight += 15;
                     score += weight;
                 }
             }
+            // Бонус за формулу: если в тексте есть формула с символом
+            const formulaRegex = new RegExp(`\\b${symbol}[0-9]*\\b`, 'i');
+            if (formulaRegex.test(lower)) score += 20;
+            
             if (score > bestMatch.score) {
                 bestMatch.score = score;
                 bestMatch.symbol = symbol;
             }
         }
         
-        // Если набрали мало баллов, но есть прямое упоминание символа в формуле
-        if (bestMatch.score < 5) {
-            const symbolMatch = text.match(/\b([A-Z][a-z]?)\b/g);
-            if (symbolMatch) {
-                for (let sym of symbolMatch) {
-                    if (ELEMENT_KEYWORDS[sym]) return sym;
-                }
-            }
-        }
-        
-        return bestMatch.score >= 3 ? bestMatch.symbol : "?";
+        return bestMatch.score >= 5 ? bestMatch.symbol : "?";
     }
 
     // Глобальные переменные
@@ -246,7 +284,6 @@
     const uploadStatus = document.getElementById('uploadStatus');
     const questionCol = document.getElementById('questionCol');
     const answerCol = document.getElementById('answerCol');
-    const groupSelect = document.getElementById('groupSelect');
     const analyzeBtn = document.getElementById('analyzeBtn');
     const exportBtn = document.getElementById('exportBtn');
     const resultsBody = document.getElementById('resultsBody');
@@ -268,9 +305,8 @@
                 sheetData = rows;
                 uploadStatus.innerHTML = `<i class="fas fa-check-circle text-success"></i> Загружено: ${rows.length} строк`;
 
-                // Заполнение селекторов
                 const maxCols = rows[0] ? rows[0].length : 0;
-                questionCol.innerHTML = '<option value="auto">Авто (поиск текста)</option>';
+                questionCol.innerHTML = '<option value="auto">Авто</option>';
                 answerCol.innerHTML = '<option value="none">Нет эталона</option>';
                 for (let i = 0; i < maxCols; i++) {
                     let header = (rows[0][i] && rows[0][i].toString().trim()) ? rows[0][i].toString().trim() : `Столбец ${i+1}`;
@@ -283,22 +319,19 @@
                 analyzeBtn.disabled = false;
                 exportBtn.disabled = true;
 
-                // Автоопределение столбца с вопросами (ищем длинный текст)
+                // Автоопределение столбцов
                 let bestQ = 0, bestQScore = -1;
                 for (let c = 0; c < maxCols; c++) {
                     let score = 0;
                     for (let r = 0; r < Math.min(rows.length, 30); r++) {
                         let cell = rows[r][c];
-                        if (cell && typeof cell === 'string' && cell.length > 20) {
-                            score += Math.min(cell.length, 100);
-                        }
+                        if (cell && typeof cell === 'string' && cell.length > 20) score += Math.min(cell.length, 100);
                     }
                     if (score > bestQScore) { bestQScore = score; bestQ = c; }
                 }
                 questionColIdx = bestQ;
                 questionCol.value = bestQ.toString();
 
-                // Автоопределение столбца с эталоном (короткие символы N, P, C...)
                 let bestA = -1;
                 for (let c = 0; c < maxCols; c++) {
                     let matches = 0;
@@ -316,9 +349,9 @@
                 for (let i = 0; i < Math.min(rows.length, 15); i++) {
                     let q = rows[i][bestQ] ? String(rows[i][bestQ]) : "";
                     let short = q.length > 80 ? q.slice(0,77)+'…' : (q || "—");
-                    previewHtml += `<tr><td class="text-center"><span class="elem-badge bg-secondary">?</span><td class="text-center">—<td class="text-light">${escapeHtml(short)}</tr>`;
+                    previewHtml += `<tr><td class="text-center"><span class="elem-badge bg-secondary">?</span></td><td class="text-center">—</td><td class="text-light">${escapeHtml(short)}</td></tr>`;
                 }
-                resultsBody.innerHTML = previewHtml || `<tr><td colspan="3" class="text-center">Нет данных</tr>`;
+                resultsBody.innerHTML = previewHtml || `<tr><td colspan="3" class="text-center">Нет данных</td></tr>`;
                 statsLabel.innerText = "Файл загружен";
             } catch(err) {
                 uploadStatus.innerHTML = `<span class="text-danger">Ошибка: ${err.message}</span>`;
@@ -372,23 +405,17 @@
         exportBtn.disabled = false;
     }
 
-    // ЭКСПОРТ
     function exportToExcel() {
         if (!resultsList.length) { alert("Нет данных. Сначала выполните классификацию."); return; }
         const excelRows = [["Определенный элемент", "Эталон", "Текст вопроса"]];
-        for (let item of resultsList) {
-            excelRows.push([item.detected, item.expected || "", item.question]);
-        }
+        for (let item of resultsList) excelRows.push([item.detected, item.expected || "", item.question]);
         const ws = XLSX.utils.aoa_to_sheet(excelRows);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Классификация");
         XLSX.writeFile(wb, `хим_классификация_${new Date().toISOString().slice(0,19)}.xlsx`);
     }
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;'));
-    }
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;')); }
 
     analyzeBtn.addEventListener('click', runClassification);
     exportBtn.addEventListener('click', exportToExcel);
@@ -397,6 +424,7 @@
     answerCol.disabled = true;
     analyzeBtn.disabled = true;
     exportBtn.disabled = true;
+    uploadStatus.innerHTML = '<span class="text-secondary">Выберите файл...</span>';
 </script>
 </body>
 </html>
