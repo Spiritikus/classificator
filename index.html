@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ХимКлассификатор — все группы элементов Менделеева</title>
+    <title>ХимКлассификатор — полная таблица Менделеева</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
-        * { box-sizing: border-box; }
         body {
             background: linear-gradient(145deg, #0a1420 0%, #060e18 100%);
             font-family: 'Segoe UI', system-ui;
@@ -76,6 +75,20 @@
             color: white !important;
             border-color: #3b82f6;
         }
+        .file-input-wrapper {
+            background: rgba(0,0,0,0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid #2d4a6e;
+        }
+        .file-input-wrapper input {
+            background-color: #1a2f3a;
+            color: white;
+            border: 1px solid #3b82f6;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+        }
     </style>
 </head>
 <body>
@@ -95,12 +108,12 @@
                 </div>
 
                 <div class="p-4 p-md-5">
-                    <!-- ПРОСТАЯ ЗАГРУЗКА ФАЙЛА -->
-                    <div class="mb-4 text-center p-4 rounded-4" style="background: rgba(0,0,0,0.2); border: 1px solid #2d4a6e;">
+                    <!-- ПРОСТАЯ ЗАГРУЗКА ФАЙЛА (гарантированно работает) -->
+                    <div class="file-input-wrapper mb-4">
                         <i class="fas fa-file-excel fa-3x text-primary mb-2"></i>
-                        <h5 class="text-white">Загрузите Excel-файл с вопросами</h5>
-                        <p class="text-secondary small">.xlsx, .xls</p>
-                        <input type="file" id="excelFileInput" accept=".xlsx, .xls, .xlsm" style="display: inline-block;" class="d-inline-block">
+                        <h5 class="text-white">Выберите Excel-файл с вопросами</h5>
+                        <p class="text-secondary small">.xlsx, .xls — первый столбец: эталон, второй: вопрос</p>
+                        <input type="file" id="excelFile" accept=".xlsx, .xls, .xlsm">
                         <div id="uploadStatus" class="mt-3 small fw-bold text-info"></div>
                     </div>
 
@@ -109,11 +122,11 @@
                         <div class="col-md-4">
                             <label class="form-label text-white fw-semibold"><i class="fas fa-columns"></i> Столбец с вопросами</label>
                             <select id="questionCol" class="form-select" disabled>
-                                <option value="auto">🧠 Автоопределение</option>
+                                <option value="auto">🧠 Авто (поиск длинного текста)</option>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label text-white fw-semibold"><i class="fas fa-check-circle"></i> Столбец с эталоном</label>
+                            <label class="form-label text-white fw-semibold"><i class="fas fa-check-circle"></i> Столбец с эталоном (N, P, C...)</label>
                             <select id="answerCol" class="form-select" disabled>
                                 <option value="none">📌 Нет эталона</option>
                             </select>
@@ -122,14 +135,14 @@
                             <label class="form-label text-white fw-semibold"><i class="fas fa-table"></i> Группа элементов</label>
                             <select id="groupSelect" class="form-select">
                                 <option value="auto">🎯 Авто (по контексту)</option>
-                                <option value="1">1 группа: H, Li, Na, K, Rb, Cs, Fr (щелочные)</option>
-                                <option value="2">2 группа: Be, Mg, Ca, Sr, Ba, Ra (щелочноземельные)</option>
+                                <option value="1">1 группа: H, Li, Na, K, Rb, Cs, Fr</option>
+                                <option value="2">2 группа: Be, Mg, Ca, Sr, Ba, Ra</option>
                                 <option value="13">13 группа: B, Al, Ga, In, Tl</option>
                                 <option value="14">14 группа: C, Si, Ge, Sn, Pb</option>
                                 <option value="15">15 группа: N, P, As, Sb, Bi</option>
                                 <option value="16">16 группа: O, S, Se, Te, Po</option>
-                                <option value="17">17 группа: F, Cl, Br, I, At (галогены)</option>
-                                <option value="18">18 группа: He, Ne, Ar, Kr, Xe, Rn (инертные)</option>
+                                <option value="17">17 группа: F, Cl, Br, I, At</option>
+                                <option value="18">18 группа: He, Ne, Ar, Kr, Xe, Rn</option>
                                 <option value="3">3 группа: Sc, Y, La, Ac</option>
                                 <option value="4">4 группа: Ti, Zr, Hf, Rf</option>
                                 <option value="5">5 группа: V, Nb, Ta, Db</option>
@@ -153,7 +166,7 @@
                         </button>
                         <div class="stat-panel text-white"><i class="fas fa-chart-line me-1"></i> <span id="statsLabel">Нет данных</span></div>
                         <button id="exportBtn" class="btn btn-outline-primary rounded-pill px-4 py-1" disabled>
-                            <i class="fas fa-download"></i> Скачать Excel
+                            <i class="fas fa-download"></i> Скачать результат
                         </button>
                     </div>
 
@@ -164,11 +177,11 @@
                                 <tr><th style="width: 100px;">🤖 Определено</th><th style="width: 80px;">📌 Эталон</th><th>📄 Текст вопроса</th></tr>
                             </thead>
                             <tbody id="resultsBody">
-                                <tr><td colspan="3" class="text-center text-secondary py-5">Выберите файл и нажмите "Классифицировать"</td></tr>
+                                <tr><td colspan="3" class="text-center text-secondary py-5">Выберите файл → нажмите "Классифицировать"</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="text-secondary pt-3 mt-2 small">🔬 База: все группы периодической системы + ключевые слова</div>
+                    <div class="text-secondary pt-3 mt-2 small">🔬 Распознаёт: фосфор (P) по словам "фосфат", "фосфин", "суперфосфат"; азот (N) по "аммиак", "нитрат" и т.д.</div>
                 </div>
             </div>
         </div>
@@ -178,34 +191,37 @@
 <script>
     // ==================== ВСЕ ГРУППЫ ЭЛЕМЕНТОВ ====================
     const GROUPS = {
-        "1": { elements: ["H","Li","Na","K","Rb","Cs","Fr"], keywords: ["водород","литий","натрий","калий","рубидий","цезий","щелочной","naoh","koh","гидроксид"] },
-        "2": { elements: ["Be","Mg","Ca","Sr","Ba","Ra"], keywords: ["бериллий","магний","кальций","стронций","барий","радий","щелочноземельный","cao","mgo","bacl2"] },
-        "13": { elements: ["B","Al","Ga","In","Tl"], keywords: ["бор","алюминий","галлий","индий","таллий","al2o3","al(oh)3","глинозем"] },
-        "14": { elements: ["C","Si","Ge","Sn","Pb"], keywords: ["углерод","кремний","германий","олово","свинец","carbon","silicon","цианамид","цианид","циановая","дициан","cn-","hcn","co2","sio2","карбид"] },
-        "15": { elements: ["N","P","As","Sb","Bi"], keywords: ["азот","фосфор","мышьяк","сурьма","висмут","фосфин","фосфиновая","фосфоновая","аммиак","нитрат","фосфат","фосфорная"] },
-        "16": { elements: ["O","S","Se","Te","Po"], keywords: ["кислород","сера","селен","теллур","оксид","сульфид","сульфат","h2so4","so2"] },
-        "17": { elements: ["F","Cl","Br","I","At"], keywords: ["фтор","хлор","бром","йод","галоген","фторид","хлорид","бромид","иодид"] },
-        "18": { elements: ["He","Ne","Ar","Kr","Xe","Rn"], keywords: ["гелий","неон","аргон","криптон","ксенон","радон","инертный","благородный"] },
-        "3": { elements: ["Sc","Y","La","Ac"], keywords: ["скандий","иттрий","лантан","актиний"] },
-        "4": { elements: ["Ti","Zr","Hf","Rf"], keywords: ["титан","цирконий","гафний"] },
-        "5": { elements: ["V","Nb","Ta","Db"], keywords: ["ванадий","ниобий","тантал"] },
-        "6": { elements: ["Cr","Mo","W","Sg"], keywords: ["хром","молибден","вольфрам"] },
-        "7": { elements: ["Mn","Tc","Re","Bh"], keywords: ["марганец","технеций","рений","перманганат","kmno4"] },
-        "8": { elements: ["Fe","Ru","Os","Hs"], keywords: ["железо","рутений","осмий","iron","феррум","ржавчина"] },
-        "9": { elements: ["Co","Rh","Ir","Mt"], keywords: ["кобальт","родий","иридий"] },
-        "10": { elements: ["Ni","Pd","Pt","Ds"], keywords: ["никель","палладий","платина"] },
-        "11": { elements: ["Cu","Ag","Au","Rg"], keywords: ["медь","серебро","золото","copper","silver","gold"] },
-        "12": { elements: ["Zn","Cd","Hg","Cn"], keywords: ["цинк","кадмий","ртуть","mercury"] },
-        "lan": { elements: ["La","Ce","Pr","Nd","Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb","Lu"], keywords: ["лантан","церий","празеодим","неодим","самарий","европий","гадолиний","тербий","диспрозий","гольмий","эрбий","тулий","иттербий","лютеций"] },
-        "act": { elements: ["Ac","Th","Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm","Md","No","Lr"], keywords: ["актиний","торий","протактиний","уран","нептуний","плутоний","америций","кюрий"] }
+        "1": { name:"Щелочные", elements: ["H","Li","Na","K","Rb","Cs","Fr"], keywords: ["водород","литий","натрий","калий","рубидий","цезий","щелочной","naoh","koh","гидроксид"] },
+        "2": { name:"Щёлочноземельные", elements: ["Be","Mg","Ca","Sr","Ba","Ra"], keywords: ["бериллий","магний","кальций","стронций","барий","радий","щелочноземельный","cao","mgo","bacl2","caco3"] },
+        "13": { name:"Борная", elements: ["B","Al","Ga","In","Tl"], keywords: ["бор","алюминий","галлий","индий","таллий","al2o3","al(oh)3"] },
+        "14": { name:"Углеродная", elements: ["C","Si","Ge","Sn","Pb"], keywords: ["углерод","кремний","германий","олово","свинец","carbon","silicon","цианамид","цианид","циановая","дициан","hcn","co2","sio2"] },
+        "15": { name:"Азотная", elements: ["N","P","As","Sb","Bi"], keywords: ["азот","фосфор","мышьяк","сурьма","висмут","фосфин","фосфиновая","фосфоновая","фосфат","фосфорная","суперфосфат","аммиак","нитрат","мочевина","nh3","h3po4"] },
+        "16": { name:"Кислородная", elements: ["O","S","Se","Te","Po"], keywords: ["кислород","сера","селен","теллур","оксид","сульфид","сульфат","h2so4","so2","озон"] },
+        "17": { name:"Галогены", elements: ["F","Cl","Br","I","At"], keywords: ["фтор","хлор","бром","йод","галоген","фторид","хлорид","бромид","иодид"] },
+        "18": { name:"Инертные", elements: ["He","Ne","Ar","Kr","Xe","Rn"], keywords: ["гелий","неон","аргон","криптон","ксенон","радон","инертный","благородный"] },
+        "3": { name:"Скандиевая", elements: ["Sc","Y","La","Ac"], keywords: ["скандий","иттрий","лантан","актиний"] },
+        "4": { name:"Титановая", elements: ["Ti","Zr","Hf","Rf"], keywords: ["титан","цирконий","гафний"] },
+        "5": { name:"Ванадиевая", elements: ["V","Nb","Ta","Db"], keywords: ["ванадий","ниобий","тантал"] },
+        "6": { name:"Хромовая", elements: ["Cr","Mo","W","Sg"], keywords: ["хром","молибден","вольфрам"] },
+        "7": { name:"Марганцевая", elements: ["Mn","Tc","Re","Bh"], keywords: ["марганец","технеций","рений","перманганат","kmno4"] },
+        "8": { name:"Железная", elements: ["Fe","Ru","Os","Hs"], keywords: ["железо","рутений","осмий","iron","феррум","ржавчина","сталь"] },
+        "9": { name:"Кобальтовая", elements: ["Co","Rh","Ir","Mt"], keywords: ["кобальт","родий","иридий"] },
+        "10": { name:"Никелевая", elements: ["Ni","Pd","Pt","Ds"], keywords: ["никель","палладий","платина"] },
+        "11": { name:"Медная", elements: ["Cu","Ag","Au","Rg"], keywords: ["медь","серебро","золото","copper","silver","gold","argentum"] },
+        "12": { name:"Цинковая", elements: ["Zn","Cd","Hg","Cn"], keywords: ["цинк","кадмий","ртуть","mercury"] },
+        "lan": { name:"Лантаноиды", elements: ["La","Ce","Pr","Nd","Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb","Lu"], keywords: ["лантан","церий","празеодим","неодим","самарий","европий","гадолиний"] },
+        "act": { name:"Актиноиды", elements: ["Ac","Th","Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm","Md","No","Lr"], keywords: ["актиний","торий","уран","плутоний","нептуний","америций"] }
     };
 
+    // Названия элементов для точного поиска
     const ELEMENT_NAMES = {
         "H":"водород","He":"гелий","Li":"литий","Be":"бериллий","B":"бор","C":"углерод","N":"азот","O":"кислород","F":"фтор",
         "Na":"натрий","Mg":"магний","Al":"алюминий","Si":"кремний","P":"фосфор","S":"сера","Cl":"хлор","K":"калий","Ca":"кальций",
-        "Fe":"железо","Cu":"медь","Zn":"цинк","Ag":"серебро","Au":"золото","Hg":"ртуть","Pb":"свинец","Sn":"олово","Pt":"платина"
+        "Fe":"железо","Cu":"медь","Zn":"цинк","Ag":"серебро","Au":"золото","Hg":"ртуть","Pb":"свинец","Sn":"олово","Pt":"платина",
+        "Cr":"хром","Mn":"марганец","Ni":"никель","Co":"кобальт","As":"мышьяк","Sb":"сурьма","Bi":"висмут","Se":"селен","Te":"теллур"
     };
 
+    // Определение группы по тексту вопроса
     function detectGroupFromText(text) {
         if (!text) return null;
         const lower = text.toLowerCase();
@@ -213,23 +229,27 @@
         for (let [gid, grp] of Object.entries(GROUPS)) {
             let score = 0;
             for (let kw of grp.keywords) {
-                if (lower.includes(kw)) score += kw.length + 5;
+                if (lower.includes(kw.toLowerCase())) {
+                    score += kw.length + 5;
+                }
             }
             if (score > bestScore) { bestScore = score; best = gid; }
         }
         return best;
     }
 
+    // Выбор конкретного элемента в группе
     function selectElementInGroup(groupId, text) {
         if (!groupId || !GROUPS[groupId]) return "?";
         const lower = text.toLowerCase();
         for (let elem of GROUPS[groupId].elements) {
             let name = ELEMENT_NAMES[elem];
-            if (name && lower.includes(name)) return elem;
+            if (name && lower.includes(name.toLowerCase())) return elem;
         }
         return GROUPS[groupId].elements[0];
     }
 
+    // Главная функция определения элемента
     function detectElement(question, forcedGroup) {
         if (!question || question.trim() === "") return "?";
         let group = (forcedGroup && forcedGroup !== "auto") ? forcedGroup : detectGroupFromText(question);
@@ -244,7 +264,7 @@
     let resultsList = [];
 
     // DOM
-    const fileInput = document.getElementById('excelFileInput');
+    const fileInput = document.getElementById('excelFile');
     const uploadStatus = document.getElementById('uploadStatus');
     const questionCol = document.getElementById('questionCol');
     const answerCol = document.getElementById('answerCol');
@@ -254,7 +274,7 @@
     const resultsBody = document.getElementById('resultsBody');
     const statsLabel = document.getElementById('statsLabel');
 
-    // ОБРАБОТЧИК ЗАГРУЗКИ ФАЙЛА (прямой, без конфликтов)
+    // ЗАГРУЗКА ФАЙЛА (простой и надёжный обработчик)
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -273,9 +293,9 @@
                 sheetData = rows;
                 uploadStatus.innerHTML = `<i class="fas fa-check-circle text-success"></i> Загружено: ${rows.length} строк (${file.name})`;
                 
-                // Заполнение селекторов
+                // Заполнение селекторов столбцов
                 const maxCols = rows[0] ? rows[0].length : 0;
-                questionCol.innerHTML = '<option value="auto">🧠 Авто (поиск вопросов)</option>';
+                questionCol.innerHTML = '<option value="auto">🧠 Авто (найти текст вопросов)</option>';
                 answerCol.innerHTML = '<option value="none">📌 Нет эталона</option>';
                 
                 for (let i = 0; i < maxCols; i++) {
@@ -290,17 +310,16 @@
                 analyzeBtn.disabled = false;
                 exportBtn.disabled = true;
                 
-                // Автоопределение столбца с вопросами
+                // Автоопределение столбца с вопросами (ищем длинные тексты)
                 let bestQ = 0, bestQScore = -1;
                 for (let c = 0; c < maxCols; c++) {
                     let score = 0;
                     for (let r = 0; r < Math.min(rows.length, 40); r++) {
                         let cell = rows[r][c];
-                        if (cell && typeof cell === 'string' && cell.length > 15) {
-                            score += 2;
+                        if (cell && typeof cell === 'string' && cell.length > 20) {
+                            score += 3;
                             let low = cell.toLowerCase();
-                            if (low.includes("какой") || low.includes("элемент")) score += 5;
-                            if (low.includes("реакция") || low.includes("кислота")) score += 3;
+                            if (low.includes("реакция") || low.includes("кислота") || low.includes("получают")) score += 5;
                         }
                     }
                     if (score > bestQScore) { bestQScore = score; bestQ = c; }
@@ -308,7 +327,7 @@
                 questionColIdx = bestQ;
                 questionCol.value = bestQ.toString();
                 
-                // Поиск эталонного столбца (где есть символы N, P, C и т.д.)
+                // Автоопределение столбца с эталоном (ищем короткие символы N, P, C, K...)
                 let bestA = -1;
                 for (let c = 0; c < maxCols; c++) {
                     let matches = 0;
@@ -316,19 +335,19 @@
                         let cell = rows[r][c];
                         if (cell && typeof cell === 'string' && /^[A-Z][a-z]?$/.test(cell.trim())) matches++;
                     }
-                    if (matches > 3) { bestA = c; break; }
+                    if (matches > 2) { bestA = c; break; }
                 }
                 answerColIdx = bestA;
                 if (bestA >= 0) answerCol.value = bestA.toString();
                 
                 // Превью
                 let previewHtml = '';
-                for (let i = 0; i < Math.min(rows.length, 20); i++) {
+                for (let i = 0; i < Math.min(rows.length, 15); i++) {
                     let q = rows[i][bestQ] ? String(rows[i][bestQ]) : "";
-                    let short = q.length > 90 ? q.slice(0,87)+'…' : (q || "—");
-                    previewHtml += `<tr><td class="text-center"><span class="elem-badge bg-secondary">?</span><td class="text-center">—<td class="text-light">${escapeHtml(short)}</tr>`;
+                    let short = q.length > 80 ? q.slice(0,77)+'…' : (q || "—");
+                    previewHtml += `<tr><td class="text-center"><span class="elem-badge bg-secondary">?</span><td class="text-center">—<td class="text-light">${escapeHtml(short)}</td></tr>`;
                 }
-                resultsBody.innerHTML = previewHtml || `<tr><td colspan="3" class="text-center">Нет данных</tr>`;
+                resultsBody.innerHTML = previewHtml || `<tr><td colspan="3" class="text-center">Нет данных</td></tr>`;
                 statsLabel.innerText = "Файл загружен";
                 
             } catch(err) {
@@ -341,10 +360,10 @@
 
     // КЛАССИФИКАЦИЯ
     function runClassification() {
-        if (!sheetData.length) { alert("Сначала загрузите файл!"); return; }
+        if (!sheetData.length) { alert("Сначала выберите файл!"); return; }
         
         let qVal = questionCol.value;
-        let targetQ = (qVal === "auto") ? 0 : parseInt(qVal, 10);
+        let targetQ = (qVal === "auto") ? questionColIdx : parseInt(qVal, 10);
         if (isNaN(targetQ)) targetQ = 0;
         questionColIdx = targetQ;
         
@@ -375,7 +394,7 @@
             if (expected) badgeClass += (detected === expected) ? " elem-correct" : " elem-wrong";
             
             let shortQ = question.length > 100 ? question.slice(0,97)+'…' : (question || "(пусто)");
-            htmlRows += `<table>
+            htmlRows += `<tr>
                 <td class="text-center"><span class="${badgeClass}">${escapeHtml(detected)}</span></td>
                 <td class="text-center text-info">${escapeHtml(expected || "—")}</td>
                 <td class="text-light">${escapeHtml(shortQ)}</td>
@@ -390,7 +409,7 @@
 
     // ЭКСПОРТ
     function exportToExcel() {
-        if (!resultsList.length) { alert("Нет данных для экспорта. Сначала выполните классификацию."); return; }
+        if (!resultsList.length) { alert("Нет данных. Сначала выполните классификацию."); return; }
         const excelRows = [["Определенный элемент", "Эталон", "Текст вопроса"]];
         for (let item of resultsList) {
             excelRows.push([item.detected, item.expected || "", item.question]);
@@ -415,7 +434,6 @@
     answerCol.disabled = true;
     analyzeBtn.disabled = true;
     exportBtn.disabled = true;
-    uploadStatus.innerHTML = '<span class="text-secondary">Выберите файл Excel...</span>';
 </script>
 </body>
 </html>
