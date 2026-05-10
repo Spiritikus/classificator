@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ХимКлассификатор — по первому слову-элементу в вопросе</title>
+    <title>ХимКлассификатор PRO — ассоциативные ряды элементов</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
@@ -23,7 +23,6 @@
         select.form-select { background-color: #1a2f3a !important; color: white !important; border-color: #3b82f6; }
         .file-input-wrapper { background: rgba(0,0,0,0.3); border-radius: 1rem; padding: 1.5rem; text-align: center; border: 1px solid #2d4a6e; }
         .group-card { background: rgba(0,0,0,0.2); border-radius: 1rem; padding: 1rem; margin-bottom: 1rem; }
-        .first-word-example { background: #1a3a4a; border-radius: 0.5rem; padding: 0.5rem; font-size: 0.75rem; }
     </style>
 </head>
 <body>
@@ -35,8 +34,8 @@
                 <div class="header-blue p-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h2 class="text-white fw-bold mb-0"><i class="fas fa-chalkboard me-2 text-primary"></i> ХимКлассификатор</h2>
-                            <p class="text-info-emphasis small mt-1">Анализ по <strong class="text-warning">первому слову-элементу</strong> в тексте вопроса</p>
+                            <h2 class="text-white fw-bold mb-0"><i class="fas fa-chalkboard me-2 text-primary"></i> ХимКлассификатор PRO</h2>
+                            <p class="text-info-emphasis small mt-1">Ассоциативные ряды: оксиды, гидроксиды, кислоты, соли для каждого элемента</p>
                         </div>
                         <i class="fas fa-atom fa-3x text-primary opacity-50"></i>
                     </div>
@@ -52,24 +51,23 @@
                         <div id="uploadStatus" class="mt-2 small fw-bold text-info"></div>
                     </div>
 
-                    <!-- Выбор группы элементов -->
+                    <!-- Выбор группы -->
                     <div class="group-card mb-4">
-                        <h6 class="text-white mb-2"><i class="fas fa-table me-2 text-warning"></i> 2. Выберите группу элементов</h6>
+                        <h6 class="text-white mb-2"><i class="fas fa-table me-2 text-warning"></i> 2. Выберите группу элементов (для точности)</h6>
                         <select id="groupSelect" class="form-select">
                             <option value="auto">🔁 Авто (все элементы)</option>
-                            <option value="14">🗂️ 14 группа: C, Si, Ge, Sn, Pb (углерод, кремний, германий, олово, свинец)</option>
-                            <option value="15">🗂️ 15 группа: N, P, As, Sb, Bi (азот, фосфор, мышьяк, сурьма, висмут)</option>
-                            <option value="16">🗂️ 16 группа: O, S, Se, Te, Po (кислород, сера, селен, теллур, полоний)</option>
-                            <option value="17">🗂️ 17 группа: F, Cl, Br, I, At (фтор, хлор, бром, иод, астат)</option>
-                            <option value="1">🗂️ 1 группа: Li, Na, K, Rb, Cs (литий, натрий, калий, рубидий, цезий)</option>
-                            <option value="2">🗂️ 2 группа: Be, Mg, Ca, Sr, Ba (бериллий, магний, кальций, стронций, барий)</option>
-                            <option value="13">🗂️ 13 группа: B, Al, Ga, In, Tl (бор, алюминий, галлий, индий, таллий)</option>
+                            <option value="1">🗂️ 1 группа: H, Li, Na, K, Rb, Cs, Fr</option>
+                            <option value="2">🗂️ 2 группа: Be, Mg, Ca, Sr, Ba, Ra</option>
+                            <option value="13">🗂️ 13 группа: B, Al, Ga, In, Tl</option>
+                            <option value="14">🗂️ 14 группа: C, Si, Ge, Sn, Pb</option>
+                            <option value="15">🗂️ 15 группа: N, P, As, Sb, Bi</option>
+                            <option value="16">🗂️ 16 группа: O, S, Se, Te, Po</option>
+                            <option value="17">🗂️ 17 группа: F, Cl, Br, I, At</option>
                             <option value="3-12">🗂️ Переходные металлы: Fe, Cu, Zn, Ag, Au, Cr, Mn, Ni, Co, Pt, Hg</option>
                         </select>
-                        <div class="first-word-example text-secondary mt-2">
-                            <i class="fas fa-info-circle text-info me-1"></i> 
-                            <strong>Как работает:</strong> Берётся <strong>первое слово</strong> в вопросе, которое является названием химического элемента 
-                            (например: "<strong>Кальций</strong> входит в состав..." → Ca; "<strong>Фосфор</strong> необходим..." → P)
+                        <div class="text-info-emphasis small mt-2">
+                            <i class="fas fa-info-circle me-1"></i> 
+                            <strong>Ассоциативные ряды:</strong> кислород → оксиды, пероксиды, гидроксиды; сера → сульфиды, сульфаты, сульфиты; азот → нитриды, нитраты, нитриты; фосфор → фосфиды, фосфаты, фосфиты и т.д.
                         </div>
                     </div>
 
@@ -120,85 +118,88 @@
 </div>
 
 <script>
-    // ==================== СЛОВАРЬ НАЗВАНИЙ ЭЛЕМЕНТОВ ====================
-    // Ключ: символ элемента, Значение: массив названий (в разных падежах)
-    const ELEMENT_NAMES_DICT = {
-        // 14 группа
-        "C": ["углерод", "углерода", "углероду", "углеродом"],
-        "Si": ["кремний", "кремния", "кремнию", "кремнием", "silicon"],
-        "Ge": ["германий", "германия"],
-        "Sn": ["олово", "олова", "олову", "оловом", "tin"],
-        "Pb": ["свинец", "свинца", "свинцу", "свинцом", "lead"],
-        
-        // 15 группа
-        "N": ["азот", "азота", "азоту", "азотом", "nitrogen"],
-        "P": ["фосфор", "фосфора", "фосфору", "фосфором", "phosphorus"],
-        "As": ["мышьяк", "мышьяка", "arsenic"],
-        "Sb": ["сурьма", "сурьмы", "antimony"],
-        "Bi": ["висмут", "висмута", "bismuth"],
-        
-        // 16 группа
-        "O": ["кислород", "кислорода", "кислороду", "кислородом", "oxygen"],
-        "S": ["сера", "серы", "сере", "серу", "серой", "sulfur"],
-        "Se": ["селен", "селена", "selenium"],
-        "Te": ["теллур", "теллура", "tellurium"],
-        "Po": ["полоний", "полония", "polonium"],
-        
-        // 17 группа
-        "F": ["фтор", "фтора", "фтору", "фтором", "fluorine"],
-        "Cl": ["хлор", "хлора", "хлору", "хлором", "chlorine"],
-        "Br": ["бром", "брома", "брому", "бромом", "bromine"],
-        "I": ["йод", "йода", "йоду", "йодом", "иод", "иода", "iodine"],
-        "At": ["астат", "астата", "astatine"],
-        
+    // ==================== АССОЦИАТИВНЫЕ РЯДЫ ЭЛЕМЕНТОВ ====================
+    // Каждый элемент содержит список ключевых слов (названия, производные, соли, кислоты, оксиды)
+    const ASSOCIATIVE_SERIES = {
         // 1 группа
-        "Li": ["литий", "лития", "lithium"],
-        "Na": ["натрий", "натрия", "sodium"],
-        "K": ["калий", "калия", "potassium"],
-        "Rb": ["рубидий", "рубидия", "rubidium"],
-        "Cs": ["цезий", "цезия", "cesium"],
+        "H": ["водород", "водорода", "hydrogen", "гидрид", "кислота", "ph", "h2", "h+", "гидроксоний", "h3o+", "протий", "дейтерий", "тритий"],
+        "Li": ["литий", "лития", "lithium", "li+", "li-ion", "гидрид лития", "карбонат лития", "li2co3"],
+        "Na": ["натрий", "натрия", "sodium", "na+", "едкий натр", "naoh", "nacl", "поваренная соль", "сода", "nahco3", "na2co3", "гидроксид натрия", "хлорид натрия", "карбонат натрия"],
+        "K": ["калий", "калия", "potassium", "k+", "koh", "kcl", "поташ", "калиевая селитра", "kno3", "гидроксид калия", "хлорид калия"],
+        "Rb": ["рубидий", "rubidium", "rb+"],
+        "Cs": ["цезий", "cesium", "cs+"],
+        "Fr": ["франций", "francium"],
         
         // 2 группа
-        "Be": ["бериллий", "бериллия", "beryllium"],
-        "Mg": ["магний", "магния", "magnesium"],
-        "Ca": ["кальций", "кальция", "calcium"],
-        "Sr": ["стронций", "стронция", "strontium"],
-        "Ba": ["барий", "бария", "barium"],
+        "Be": ["бериллий", "beryllium", "be2+"],
+        "Mg": ["магний", "магния", "magnesium", "mg2+", "mgo", "mgcl2", "магнезит", "доломит", "оксид магния", "хлорид магния", "сульфат магния", "mgso4"],
+        "Ca": ["кальций", "кальция", "calcium", "ca2+", "cao", "caco3", "известняк", "мел", "мрамор", "гипс", "ca(oh)2", "гашеная известь", "негашеная известь", "оксид кальция", "гидроксид кальция", "карбонат кальция"],
+        "Sr": ["стронций", "strontium", "sr2+"],
+        "Ba": ["барий", "бария", "barium", "ba2+", "baso4", "ba(oh)2", "bacl2", "сульфат бария", "хлорид бария", "гидроксид бария"],
+        "Ra": ["радий", "radium"],
         
         // 13 группа
-        "B": ["бор", "бора", "бору", "бором", "boron"],
-        "Al": ["алюминий", "алюминия", "aluminium", "aluminum"],
-        "Ga": ["галлий", "галлия", "gallium"],
-        "In": ["индий", "индия", "indium"],
-        "Tl": ["таллий", "таллия", "thallium"],
+        "B": ["бор", "бора", "boron", "борная кислота", "h3bo3", "бура", "тетраборат", "карбид бора", "нитрид бора"],
+        "Al": ["алюминий", "алюминия", "aluminium", "al3+", "al2o3", "al(oh)3", "глинозем", "оксид алюминия", "гидроксид алюминия", "алюмосиликат", "кварц", "корунд"],
+        "Ga": ["галлий", "gallium", "ga3+"],
+        "In": ["индий", "indium", "in3+"],
+        "Tl": ["таллий", "thallium", "tl+"],
+        
+        // 14 группа
+        "C": ["углерод", "углерода", "carbon", "карбид", "цианид", "цианамид", "циановая кислота", "дициан", "hcn", "co2", "co", "карбонат", "caco3", "графит", "алмаз", "фуллерен", "органический", "углеводород", "карбоновая кислота", "карбонил", "угарный газ", "углекислый газ"],
+        "Si": ["кремний", "кремния", "silicon", "силикат", "sio2", "кремнезем", "силан", "силикон", "карборунд", "sic", "силицид", "ортокремниевая кислота"],
+        "Ge": ["германий", "germanium"],
+        "Sn": ["олово", "олова", "tin", "станум", "sn2+", "sn4+", "sncl2", "sncl4", "касситерит", "станнат"],
+        "Pb": ["свинец", "свинца", "lead", "плюмбум", "pb2+", "pb4+", "pbo", "pbso4", "галенит", "плюмбат", "тетраэтилсвинец", "ацетат свинца"],
+        
+        // 15 группа
+        "N": ["азот", "азота", "nitrogen", "аммиак", "nh3", "nh4+", "нитрат", "нитрит", "нитрид", "азотная кислота", "hno3", "no2", "n2o", "no", "n2", "мочевина", "гидразин", "азид", "нитрозил", "нитро", "нитрозо", "соль диазония", "нитрат аммония", "nh4no3"],
+        "P": ["фосфор", "фосфора", "phosphorus", "фосфин", "ph3", "фосфиновая кислота", "фосфоновая кислота", "фосфат", "фосфид", "фосфит", "фосфорная кислота", "h3po4", "ортофосфорная кислота", "пирофосфорная кислота", "метафосфорная кислота", "p4o6", "p4o10", "суперфосфат", "pcl5", "pcl3", "p2o5", "фосфорит", "апатит", "ca3(po4)2"],
+        "As": ["мышьяк", "мышьяка", "arsenic", "as2o3", "as2o5", "арсенид", "арсин", "ash3", "арсенат", "арсенит"],
+        "Sb": ["сурьма", "сурьмы", "antimony", "sb2o3", "sb2o5", "стибин", "антимонид", "антимонат"],
+        "Bi": ["висмут", "висмута", "bismuth", "bi2o3", "висмутид"],
+        
+        // 16 группа
+        "O": ["кислород", "кислорода", "oxygen", "оксид", "озон", "o2", "o3", "пероксид", "надпероксид", "гидропероксид", "гидроксид", "вода", "h2o", "перекись", "пероксид водорода", "h2o2", "супероксид", "гидроксил", "oh-", "оксо"],
+        "S": ["сера", "серы", "sulfur", "сульфид", "сульфат", "сульфит", "сульфонат", "гидросульфид", "гидросульфит", "гидросульфат", "серная кислота", "h2so4", "сернистая кислота", "h2so3", "сероводород", "h2s", "тиосульфат", "пирит", "fes2", "купорос", "меркаптан", "тиол", "сульфоксид", "сульфон", "тиоэфир"],
+        "Se": ["селен", "селена", "selenium", "селенид", "селенит", "селенат", "селеноводород", "h2se"],
+        "Te": ["теллур", "теллура", "tellurium", "теллурид", "теллурит", "теллурат"],
+        "Po": ["полоний", "polonium"],
+        
+        // 17 группа
+        "F": ["фтор", "фтора", "fluorine", "фторид", "фтороводород", "hf", "плавиковая кислота", "фторопласт", "фреон", "фторуглерод", "гипофторит"],
+        "Cl": ["хлор", "хлора", "chlorine", "хлорид", "хлорат", "хлорит", "гипохлорит", "перхлорат", "хлороводород", "hcl", "соляная кислота", "cl2", "хлорамин", "хлороформ", "четыреххлористый углерод", "ccl4", "хлорбензол", "дихлорметан", "пентахлорид", "трихлорид", "хлорангидрид", "хлорная известь", "гипохлорит натрия", "хлорноватистая кислота", "хлорноватая кислота"],
+        "Br": ["бром", "брома", "bromine", "бромид", "бромоводород", "hbr", "бромноватистая кислота", "бромноватая кислота", "бромат"],
+        "I": ["йод", "иод", "йода", "иода", "iodine", "иодид", "йодид", "иодоводород", "hi", "иодоформ", "йодоформ", "йодноватистая кислота", "йодноватая кислота", "иодат", "периодат", "тироксин"],
+        "At": ["астат", "astatine"],
         
         // Переходные металлы
-        "Fe": ["железо", "железа", "железу", "железом", "iron"],
-        "Cu": ["медь", "меди", "медью", "copper"],
-        "Zn": ["цинк", "цинка", "zinc"],
-        "Ag": ["серебро", "серебра", "silver"],
-        "Au": ["золото", "золота", "gold"],
-        "Cr": ["хром", "хрома", "chromium"],
-        "Mn": ["марганец", "марганца", "manganese"],
-        "Ni": ["никель", "никеля", "nickel"],
-        "Co": ["кобальт", "кобальта", "cobalt"],
-        "Pt": ["платина", "платины", "platinum"],
-        "Hg": ["ртуть", "ртути", "mercury"],
-        "Cd": ["кадмий", "кадмия", "cadmium"],
-        "Ti": ["титан", "титана", "titanium"],
-        "V": ["ванадий", "ванадия", "vanadium"],
-        "Mo": ["молибден", "молибдена", "molybdenum"],
-        "W": ["вольфрам", "вольфрама", "tungsten"]
+        "Fe": ["железо", "железа", "iron", "ferrum", "fe2+", "fe3+", "fe2o3", "fe3o4", "ржавчина", "сталь", "чугун", "гематит", "магнетит", "феррит", "феррат", "железный купорос", "feso4", "хлорид железа", "ferrocene"],
+        "Cu": ["медь", "меди", "copper", "cu+", "cu2+", "cuo", "cu2o", "cuso4", "медный купорос", "бронза", "латунь", "купрум", "халькопирит", "оксид меди", "сульфат меди", "гидроксид меди", "хлорид меди"],
+        "Zn": ["цинк", "цинка", "zinc", "zn2+", "zno", "zncl2", "оцинковка", "цинкит", "сфалерит", "оксид цинка", "хлорид цинка", "сульфат цинка"],
+        "Ag": ["серебро", "серебра", "silver", "argentum", "ag+", "agcl", "ag2o", "аргентит", "хлорид серебра", "оксид серебра", "нитрат серебра", "agno3"],
+        "Au": ["золото", "золота", "gold", "аурум", "au+", "au3+", "aucl3", "хлорид золота", "цианид золота"],
+        "Cr": ["хром", "хрома", "chromium", "cr3+", "cr6+", "cr2o3", "хромат", "дихромат", "k2cr2o7", "k2cro4", "оксид хрома", "хромовая кислота", "двухромовая кислота"],
+        "Mn": ["марганец", "марганца", "manganese", "mn2+", "mn4+", "mn7+", "kmno4", "перманганат", "mno2", "манганат", "перманганат калия", "оксид марганца"],
+        "Ni": ["никель", "никеля", "nickel", "ni2+", "nio", "никелирование", "ферроникель", "оксид никеля"],
+        "Co": ["кобальт", "кобальта", "cobalt", "co2+", "co3+", "coo", "кобальтин"],
+        "Pt": ["платина", "платины", "platinum", "pt", "платиновый катализатор", "хлорид платины"],
+        "Hg": ["ртуть", "ртути", "mercury", "hg+", "hg2+", "hgcl2", "сулема", "каломель", "ртутный", "амальгама", "хлорид ртути", "оксид ртути"],
+        "Cd": ["кадмий", "кадмия", "cadmium", "cd2+", "cds", "кадмиевый"],
+        "Ti": ["титан", "титана", "titanium", "ti4+", "tio2", "титановый сплав", "титанат"],
+        "V": ["ванадий", "ванадия", "vanadium", "v2o5", "ванадат"],
+        "Mo": ["молибден", "молибдена", "molybdenum", "mo6+", "молибдат"],
+        "W": ["вольфрам", "вольфрама", "tungsten", "wolfram", "w6+", "вольфрамат", "карбид вольфрама"]
     };
 
-    // Все элементы для авто-режима
-    const ALL_ELEMENTS = Object.keys(ELEMENT_NAMES_DICT);
+    // Список всех элементов
+    const ALL_ELEMENTS = Object.keys(ASSOCIATIVE_SERIES);
 
-    // Функция поиска ПЕРВОГО слова-элемента в тексте
-    function findFirstElementInText(text, allowedElements = null) {
+    // Функция поиска ПЕРВОГО соответствия в ассоциативном ряду
+    function findFirstElementByAssociation(text, allowedElements = null) {
         if (!text || typeof text !== "string") return "?";
         
-        // Очищаем текст от формул и спецсимволов, но сохраняем слова
+        // Очищаем текст от формул, но сохраняем слова
         let cleanText = text.toLowerCase();
         
         // Удаляем LaTeX формулы \ce{...}
@@ -206,7 +207,7 @@
         cleanText = cleanText.replace(/\\\[.*?\\\]/g, ' ');
         cleanText = cleanText.replace(/\$[^$]*\$/g, ' ');
         
-        // Разбиваем на слова (по пробелам и знакам препинания)
+        // Разбиваем на слова
         const words = cleanText.split(/[\s,;:.!?()\[\]{}<>\/\\+=|"'-]+/).filter(w => w.length > 1);
         
         // Определяем список элементов для поиска
@@ -218,23 +219,22 @@
         // Идём по словам по порядку
         for (let word of words) {
             for (let element of searchElements) {
-                const names = ELEMENT_NAMES_DICT[element];
-                if (names && names.some(name => word === name || word.startsWith(name + "(") || word.startsWith(name + "["))) {
+                const keywords = ASSOCIATIVE_SERIES[element];
+                if (keywords && keywords.some(kw => word === kw || word.startsWith(kw + "(") || word.startsWith(kw + "["))) {
                     return element;
                 }
             }
         }
         
-        // Если не нашли точное совпадение, пробуем частичное (слово начинается с названия)
+        // Второй проход: частичные совпадения (слово начинается с ключевого слова)
         for (let word of words) {
             for (let element of searchElements) {
-                const names = ELEMENT_NAMES_DICT[element];
-                if (names) {
-                    for (let name of names) {
-                        if (word.startsWith(name) && word.length > name.length) {
-                            // Проверяем, что остаток не продолжает название (например "фосфорная" → "фосфор")
-                            const remainder = word.slice(name.length);
-                            if (!remainder.match(/^[а-я]/i)) {
+                const keywords = ASSOCIATIVE_SERIES[element];
+                if (keywords) {
+                    for (let kw of keywords) {
+                        if (word.startsWith(kw) && word.length > kw.length) {
+                            const remainder = word.slice(kw.length);
+                            if (!remainder.match(/^[а-яa-z]/i)) {
                                 return element;
                             }
                         }
@@ -267,13 +267,13 @@
     function getElementsByGroup(groupId) {
         if (groupId === "auto") return null;
         const groupMap = {
+            "1": ["H", "Li", "Na", "K", "Rb", "Cs", "Fr"],
+            "2": ["Be", "Mg", "Ca", "Sr", "Ba", "Ra"],
+            "13": ["B", "Al", "Ga", "In", "Tl"],
             "14": ["C", "Si", "Ge", "Sn", "Pb"],
             "15": ["N", "P", "As", "Sb", "Bi"],
             "16": ["O", "S", "Se", "Te", "Po"],
             "17": ["F", "Cl", "Br", "I", "At"],
-            "1": ["Li", "Na", "K", "Rb", "Cs"],
-            "2": ["Be", "Mg", "Ca", "Sr", "Ba"],
-            "13": ["B", "Al", "Ga", "In", "Tl"],
             "3-12": ["Fe", "Cu", "Zn", "Ag", "Au", "Cr", "Mn", "Ni", "Co", "Pt", "Hg", "Cd", "Ti", "V", "Mo", "W"]
         };
         return groupMap[groupId] || ALL_ELEMENTS;
@@ -382,7 +382,7 @@
         
         for (let i = 0; i < sheetData.length; i++) {
             let question = sheetData[i][targetQ] ? String(sheetData[i][targetQ]) : "";
-            let detected = findFirstElementInText(question, allowedElements);
+            let detected = findFirstElementByAssociation(question, allowedElements);
             let expected = (targetA >= 0 && sheetData[i][targetA]) ? String(sheetData[i][targetA]).trim() : "";
             
             if (expected && expected.length > 0) {
@@ -410,7 +410,7 @@
 
     function exportToExcel() {
         if (!resultsList.length) { alert("Нет данных. Сначала выполните классификацию."); return; }
-        const excelRows = [["Определенный элемент (первое слово-элемент)", "Эталон", "Текст вопроса"]];
+        const excelRows = [["Определенный элемент (первое слово из ассоциативного ряда)", "Эталон", "Текст вопроса"]];
         for (let item of resultsList) excelRows.push([item.detected, item.expected || "", item.question]);
         const ws = XLSX.utils.aoa_to_sheet(excelRows);
         const wb = XLSX.utils.book_new();
