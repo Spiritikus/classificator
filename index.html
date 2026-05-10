@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ХимКлассификатор PRO — расширенная база элементов</title>
+    <title>ХимКлассификатор — определение главного элемента в соединении</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
-        body { background: linear-gradient(145deg, #0a1420 0%, #060e18 100%); font-family: 'Segoe UI', system-ui; }
+        body { background: linear-gradient(145deg, #0a1420 0%, #060e18 100%); font-family: 'Segoe UI', system-ui; min-height: 100vh; }
         .glass-card { background: rgba(18,30,42,0.95); backdrop-filter: blur(12px); border-radius: 1.8rem; border: 1px solid rgba(59,130,246,0.4); }
         .header-blue { background: linear-gradient(95deg, #0f2a38, #0a1f2c); border-radius: 1.8rem 1.8rem 0 0; border-bottom: 2px solid #3b82f6; }
         .btn-analyze { background: linear-gradient(95deg, #2563eb, #1e40af); border: none; font-weight: 600; }
@@ -33,8 +33,8 @@
                 <div class="header-blue p-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h2 class="text-white fw-bold mb-0"><i class="fas fa-chalkboard me-2 text-primary"></i> Менделеев Классификатор PRO</h2>
-                            <p class="text-info-emphasis small mt-1">Расширенная база: 2000+ ключевых слов (кислоты, соли, оксиды, реакции)</p>
+                            <h2 class="text-white fw-bold mb-0"><i class="fas fa-chalkboard me-2 text-primary"></i> ХимКлассификатор</h2>
+                            <p class="text-info-emphasis small mt-1">Определение главного элемента в соединении (центральный атом)</p>
                         </div>
                         <i class="fas fa-atom fa-3x text-primary opacity-50"></i>
                     </div>
@@ -55,7 +55,7 @@
                             <select id="questionCol" class="form-select" disabled><option value="auto">Авто</option></select>
                         </div>
                         <div class="col-md-5">
-                            <label class="form-label text-white fw-semibold">Столбец с эталоном (N, P, Cl...)</label>
+                            <label class="form-label text-white fw-semibold">Столбец с эталоном</label>
                             <select id="answerCol" class="form-select" disabled><option value="none">Нет эталона</option></select>
                         </div>
                         <div class="col-md-2 text-end">
@@ -70,11 +70,11 @@
 
                     <div class="table-container">
                         <table class="table table-hover table-bordered mb-0">
-                            <thead><tr><th style="width:100px">Определено</th><th style="width:80px">Эталон</th><th>Текст вопроса</th></tr></thead>
-                            <tbody id="resultsBody"><tr><td colspan="3" class="text-center py-5 text-secondary">Выберите файл → Анализ</td></tr></tbody>
+                            <thead><tr><th style="width:100px">Определено</th><th style="width:80px">Эталон</th><th>Текст вопроса</th><tr></thead>
+                            <tbody id="resultsBody"><td><td colspan="3" class="text-center py-5 text-secondary">Выберите файл → Анализ</td></tr></tbody>
                         </table>
                     </div>
-                    <div class="text-secondary pt-3 mt-2 small">🔬 Ключевые слова: фосфин, PCl5, фосфорная кислота → P; оксид азота, NO, аммиак → N; пентахлорид, хлорид → Cl</div>
+                    <div class="text-secondary pt-3 mt-2 small">🔬 Правила: пентахлорид фосфора → P (центральный атом), оксид азота → N, хлорид натрия → Na</div>
                 </div>
             </div>
         </div>
@@ -82,187 +82,161 @@
 </div>
 
 <script>
-    // ==================== РАСШИРЕННАЯ БАЗА (2000+ паттернов) ====================
-    const ELEMENTS_DB = {
-        // 15 группа - АЗОТ И ФОСФОР (важнейшие)
-        "N": { 
-            priority: 100,
-            keywords: [
-                "азот", "nitrogen", "аммиак", "nh3", "nh4", "нитрат", "нитрит", "нитрид", "азотная кислота", "hno3", 
-                "no2", "n2o", "no", "n2", "мочевина", "карбамид", "nh2", "нитрозил", "нитро", "нитрозо", "nh4cl",
-                "нитрат аммония", "nh4no3", "нитроглицерин", "азид", "гидразин", "n2h4", "соль диазония"
-            ]
-        },
-        "P": { 
-            priority: 100,
-            keywords: [
-                "фосфор", "phosphorus", "фосфин", "ph3", "фосфиновая", "фосфоновая", "фосфат", "фосфид", "фосфит",
-                "фосфорная кислота", "h3po4", "p4o6", "p4o10", "суперфосфат", "pcl5", "pcl3", "pocl3", "p2o5",
-                "ортофосфорная", "пирофосфорная", "метафосфорная", "фосфорит", "апатит", "ca3(po4)2", "фосфоцен",
-                "фосфорорганический", "фосфомицин", "dna", "атф", "аденозинтрифосфат", "фосфолипид", "фосфопротеин"
-            ]
-        },
-        "As": { keywords: ["мышьяк", "arsenic", "as2o3", "арсенид", "арсин", "ash3"] },
-        "Sb": { keywords: ["сурьма", "antimony", "sb2o3", "стибин"] },
-        "Bi": { keywords: ["висмут", "bismuth", "bi2o3", "висмутид"] },
+    // ==================== БАЗА КЛЮЧЕВЫХ СЛОВ ДЛЯ ГЛАВНОГО ЭЛЕМЕНТА ====================
+    // Каждый элемент: названия соединений, где он является центральным атомом
+    const CENTRAL_ELEMENT_KEYWORDS = {
+        // 15 группа
+        "P": [
+            "фосфор", "phosphorus", "фосфин", "ph3", "фосфиновая", "фосфоновая", "фосфат", "фосфид", "фосфит",
+            "фосфорная кислота", "h3po4", "p4o6", "p4o10", "суперфосфат", "pcl5", "pcl3", "pocl3", "p2o5",
+            "ортофосфорная", "пирофосфорная", "метафосфорная", "фосфорит", "апатит", "ca3(po4)2", "фосфоцен",
+            "пентахлорид фосфора", "трихлорид фосфора", "оксид фосфора", "фосфорный ангидрид"
+        ],
+        "N": [
+            "азот", "nitrogen", "аммиак", "nh3", "nh4", "нитрат", "нитрит", "нитрид", "азотная кислота", "hno3",
+            "no2", "n2o", "no", "n2", "мочевина", "карбамид", "оксид азота", "нитрозил", "нитро", "нитрозо",
+            "азид", "гидразин", "соль диазония", "нитрат аммония"
+        ],
+        "As": ["мышьяк", "arsenic", "as2o3", "арсенид", "арсин", "ash3"],
+        "Sb": ["сурьма", "antimony", "sb2o3", "стибин"],
+        "Bi": ["висмут", "bismuth", "bi2o3"],
         
-        // 14 группа - УГЛЕРОД И КРЕМНИЙ
-        "C": { 
-            priority: 95,
-            keywords: [
-                "углерод", "carbon", "карбид", "цианид", "цианамид", "циановая", "дициан", "cn-", "hcn", "co2", "co",
-                "карбонат", "caco3", "карбон", "сажа", "графит", "алмаз", "фуллерен", "органический", "углеводород",
-                "спирт", "альдегид", "кетон", "карбоновая кислота", "эфир", "аминокислота", "белок", "углевод"
-            ]
-        },
-        "Si": { keywords: ["кремний", "silicon", "силикат", "sio2", "кремнезем", "силан", "силикон", "карборунд", "sic"] },
-        "Ge": { keywords: ["германий", "germanium"] },
-        "Sn": { keywords: ["олово", "tin", "станум", "sncl2", "sncl4"] },
-        "Pb": { keywords: ["свинец", "lead", "плюмбум", "pbo", "pbso4", "тетраэтилсвинец"] },
+        // 14 группа
+        "C": [
+            "углерод", "carbon", "карбид", "цианид", "цианамид", "циановая", "дициан", "hcn", "co2", "co",
+            "карбонат", "caco3", "карбон", "сажа", "графит", "алмаз", "фуллерен", "органический", "углеводород",
+            "оксид углерода", "угарный газ", "углекислый газ"
+        ],
+        "Si": ["кремний", "silicon", "силикат", "sio2", "кремнезем", "силан", "силикон", "карборунд", "sic"],
+        "Sn": ["олово", "tin", "станум", "sncl2", "sncl4", "оксид олова"],
+        "Pb": ["свинец", "lead", "плюмбум", "pbo", "pbso4", "тетраэтилсвинец", "оксид свинца"],
         
-        // 16 группа - КИСЛОРОД И СЕРА
-        "O": { keywords: ["кислород", "oxygen", "оксид", "озон", "о2", "о3", "пероксид", "гидроксид", "гидроксил"] },
-        "S": { 
-            priority: 90,
-            keywords: [
-                "сера", "sulfur", "сульфат", "сульфид", "сульфит", "h2so4", "серная кислота", "so2", "so3", "сероводород",
-                "h2s", "тиосульфат", "пирит", "fes2", "купорос", "сульфонат", "сульфоксид", "меркаптан", "тиол"
-            ]
-        },
-        "Se": { keywords: ["селен", "selenium", "селенид"] },
-        "Te": { keywords: ["теллур", "tellurium"] },
+        // 16 группа
+        "O": ["кислород", "oxygen", "оксид", "озон", "о2", "о3", "пероксид", "гидроксид", "вода", "h2o"],
+        "S": [
+            "сера", "sulfur", "сульфат", "сульфид", "сульфит", "h2so4", "серная кислота", "so2", "so3", "сероводород",
+            "h2s", "тиосульфат", "пирит", "купорос", "сернистый газ", "серный ангидрид"
+        ],
+        "Se": ["селен", "selenium", "селенид"],
         
-        // 17 группа - ГАЛОГЕНЫ
-        "Cl": { 
-            priority: 95,
-            keywords: [
-                "хлор", "chlorine", "хлорид", "хлорат", "хлорит", "гипохлорит", "перхлорат", "hcl", "соляная кислота",
-                "kcl", "nacl", "pcl5", "pcl3", "cl2", "хлорамин", "хлороформ", "ccl4", "хлорбензол", "дихлорметан",
-                "пентахлорид", "трихлорид", "хлорангидрид", "хлорная известь", "хлоруксусная"
-            ]
-        },
-        "Br": { keywords: ["бром", "bromine", "бромид", "br2", "hbr", "бромид калия", "kbr", "бромметан"] },
-        "I": { keywords: ["йод", "иод", "iodine", "иодид", "i2", "hi", "иодоформ", "тироксин"] },
-        "F": { keywords: ["фтор", "fluorine", "фторид", "f2", "hf", "плавиковая кислота", "фреон", "фторопласт"] },
-        "At": { keywords: ["астат", "astatine"] },
+        // 17 группа (галогены как центральные — редко, но бывают: хлорид иода, фторид хлора)
+        "Cl": ["хлор", "chlorine", "хлорид", "хлорат", "hcl", "соляная кислота", "cl2", "хлорноватистая"],
+        "Br": ["бром", "bromine", "бромид", "br2", "hbr"],
+        "I": ["йод", "иод", "iodine", "иодид", "i2", "hi", "иодоформ"],
+        "F": ["фтор", "fluorine", "фторид", "f2", "hf", "плавиковая кислота"],
         
-        // 1 группа - ЩЕЛОЧНЫЕ
-        "H": { keywords: ["водород", "hydrogen", "h2", "гидрид", "протий", "дейтерий", "тритий", "кислотность", "ph"] },
-        "Li": { keywords: ["литий", "lithium", "li-ion", "литиевый аккумулятор", "li2co3"] },
-        "Na": { keywords: ["натрий", "sodium", "едкий натр", "naoh", "nacl", "сода", "nahco3", "na2co3", "поваренная соль"] },
-        "K": { keywords: ["калий", "potassium", "koh", "kcl", "поташ", "калиевая селитра", "kno3", "k2co3"] },
-        "Rb": { keywords: ["рубидий", "rubidium"] },
-        "Cs": { keywords: ["цезий", "cesium"] },
-        "Fr": { keywords: ["франций", "francium"] },
+        // 1 группа (металлы как центральные)
+        "H": ["водород", "hydrogen", "h2", "гидрид", "кислота", "ph"],
+        "Li": ["литий", "lithium", "li-ion", "гидрид лития", "карбонат лития"],
+        "Na": ["натрий", "sodium", "едкий натр", "naoh", "nacl", "сода", "nahco3", "na2co3", "хлорид натрия", "гидроксид натрия", "карбонат натрия"],
+        "K": ["калий", "potassium", "koh", "kcl", "поташ", "калиевая селитра", "kno3", "гидроксид калия", "хлорид калия"],
+        "Rb": ["рубидий", "rubidium"],
+        "Cs": ["цезий", "cesium"],
         
-        // 2 группа - ЩЁЛОЧНОЗЕМЕЛЬНЫЕ
-        "Be": { keywords: ["бериллий", "beryllium"] },
-        "Mg": { keywords: ["магний", "magnesium", "mgo", "mgcl2", "магнезит", "доломит", "mgs", "магнийорганический"] },
-        "Ca": { keywords: ["кальций", "calcium", "cao", "caco3", "известняк", "мел", "гипс", "ca(oh)2", "апатит", "гидроксиапатит"] },
-        "Sr": { keywords: ["стронций", "strontium"] },
-        "Ba": { keywords: ["барий", "barium", "baso4", "ba(oh)2", "bacl2"] },
-        "Ra": { keywords: ["радий", "radium"] },
+        // 2 группа
+        "Be": ["бериллий", "beryllium"],
+        "Mg": ["магний", "magnesium", "mgo", "mgcl2", "магнезит", "доломит", "оксид магния", "хлорид магния"],
+        "Ca": ["кальций", "calcium", "cao", "caco3", "известняк", "мел", "гипс", "ca(oh)2", "оксид кальция", "гидроксид кальция", "карбонат кальция"],
+        "Sr": ["стронций", "strontium"],
+        "Ba": ["барий", "barium", "baso4", "ba(oh)2", "bacl2", "сульфат бария", "хлорид бария"],
         
-        // 13 группа - БОР И АЛЮМИНИЙ
-        "B": { keywords: ["бор", "boron", "борная кислота", "h3bo3", "бура", "карбид бора"] },
-        "Al": { keywords: ["алюминий", "aluminium", "al2o3", "al(oh)3", "глинозем", "алюмосиликат", "кварц", "корунд"] },
-        "Ga": { keywords: ["галлий", "gallium"] },
-        "In": { keywords: ["индий", "indium"] },
-        "Tl": { keywords: ["таллий", "thallium"] },
+        // 13 группа
+        "B": ["бор", "boron", "борная кислота", "h3bo3", "бура", "карбид бора", "оксид бора"],
+        "Al": ["алюминий", "aluminium", "al2o3", "al(oh)3", "глинозем", "оксид алюминия", "гидроксид алюминия", "хлорид алюминия"],
+        "Ga": ["галлий", "gallium"],
+        "In": ["индий", "indium"],
+        "Tl": ["таллий", "thallium"],
         
-        // 3-12 группа - ПЕРЕХОДНЫЕ МЕТАЛЛЫ
-        "Sc": { keywords: ["скандий", "scandium"] },
-        "Ti": { keywords: ["титан", "titanium", "tio2", "титановый сплав", "титанат"] },
-        "V": { keywords: ["ванадий", "vanadium", "v2o5"] },
-        "Cr": { keywords: ["хром", "chromium", "cr2o3", "хромат", "дихромат", "k2cr2o7", "k2cro4", "нержавеющая сталь"] },
-        "Mn": { keywords: ["марганец", "manganese", "kmno4", "перманганат", "mno2", "манганат"] },
-        "Fe": { keywords: ["железо", "iron", "ferrum", "fe2o3", "fe3o4", "ржавчина", "сталь", "чугун", "гематит", "магнетит", "феррит"] },
-        "Co": { keywords: ["кобальт", "cobalt", "coo", "кобальтин"] },
-        "Ni": { keywords: ["никель", "nickel", "nio", "никелирование", "ферроникель"] },
-        "Cu": { keywords: ["медь", "copper", "cuo", "cuso4", "медный купорос", "бронза", "латунь", "купрум", "халькопирит"] },
-        "Zn": { keywords: ["цинк", "zinc", "zno", "zncl2", "оцинковка", "цинкит", "сфалерит"] },
-        "Y": { keywords: ["иттрий", "yttrium"] },
-        "Zr": { keywords: ["цирконий", "zirconium"] },
-        "Nb": { keywords: ["ниобий", "niobium"] },
-        "Mo": { keywords: ["молибден", "molybdenum"] },
-        "Tc": { keywords: ["технеций", "technetium"] },
-        "Ru": { keywords: ["рутений", "ruthenium"] },
-        "Rh": { keywords: ["родий", "rhodium"] },
-        "Pd": { keywords: ["палладий", "palladium"] },
-        "Ag": { keywords: ["серебро", "silver", "argentum", "agcl", "ag2o", "аргентит"] },
-        "Cd": { keywords: ["кадмий", "cadmium"] },
-        "In": { keywords: ["индий", "indium"] },
-        "Sn": { keywords: ["олово", "tin", "станум", "касситерит"] },
-        "Sb": { keywords: ["сурьма", "antimony", "стибнит"] },
-        "Te": { keywords: ["теллур", "tellurium"] },
-        "Ba": { keywords: ["барий", "barium", "барит"] },
-        "La": { keywords: ["лантан", "lanthanum"] },
-        "Ce": { keywords: ["церий", "cerium"] },
-        "Pr": { keywords: ["празеодим", "praseodymium"] },
-        "Nd": { keywords: ["неодим", "neodymium"] },
-        "Sm": { keywords: ["самарий", "samarium"] },
-        "Eu": { keywords: ["европий", "europium"] },
-        "Gd": { keywords: ["гадолиний", "gadolinium"] },
-        "Tb": { keywords: ["тербий", "terbium"] },
-        "Dy": { keywords: ["диспрозий", "dysprosium"] },
-        "Ho": { keywords: ["гольмий", "holmium"] },
-        "Er": { keywords: ["эрбий", "erbium"] },
-        "Tm": { keywords: ["тулий", "thulium"] },
-        "Yb": { keywords: ["иттербий", "ytterbium"] },
-        "Lu": { keywords: ["лютеций", "lutetium"] },
-        "Hf": { keywords: ["гафний", "hafnium"] },
-        "Ta": { keywords: ["тантал", "tantalum"] },
-        "W": { keywords: ["вольфрам", "tungsten", "wolfram", "карбид вольфрама"] },
-        "Re": { keywords: ["рений", "rhenium"] },
-        "Os": { keywords: ["осмий", "osmium"] },
-        "Ir": { keywords: ["иридий", "iridium"] },
-        "Pt": { keywords: ["платина", "platinum", "платиновый катализатор"] },
-        "Au": { keywords: ["золото", "gold", "аурум", "aucl3", "золотая кислота"] },
-        "Hg": { keywords: ["ртуть", "mercury", "hgcl2", "сулема", "каломель", "ртутный", "амальгама"] },
-        "Pb": { keywords: ["свинец", "lead", "плюмбум", "галенит"] },
+        // Переходные металлы
+        "Ti": ["титан", "titanium", "tio2", "титановый сплав", "оксид титана"],
+        "Cr": ["хром", "chromium", "cr2o3", "хромат", "дихромат", "k2cr2o7", "оксид хрома"],
+        "Mn": ["марганец", "manganese", "kmno4", "перманганат", "mno2", "перманганат калия"],
+        "Fe": ["железо", "iron", "ferrum", "fe2o3", "fe3o4", "ржавчина", "сталь", "чугун", "гематит", "магнетит", "оксид железа", "хлорид железа"],
+        "Co": ["кобальт", "cobalt"],
+        "Ni": ["никель", "nickel", "nio", "никелирование"],
+        "Cu": ["медь", "copper", "cuo", "cuso4", "медный купорос", "бронза", "латунь", "оксид меди", "сульфат меди"],
+        "Zn": ["цинк", "zinc", "zno", "zncl2", "оцинковка", "оксид цинка", "хлорид цинка"],
+        "Ag": ["серебро", "silver", "argentum", "agcl", "ag2o", "хлорид серебра"],
+        "Au": ["золото", "gold", "аурум"],
+        "Hg": ["ртуть", "mercury", "hgcl2", "сулема", "каломель", "хлорид ртути"],
+        "Pt": ["платина", "platinum", "платиновый катализатор"],
         
         // Инертные газы
-        "He": { keywords: ["гелий", "helium"] },
-        "Ne": { keywords: ["неон", "neon"] },
-        "Ar": { keywords: ["аргон", "argon"] },
-        "Kr": { keywords: ["криптон", "krypton"] },
-        "Xe": { keywords: ["ксенон", "xenon"] },
-        "Rn": { keywords: ["радон", "radon"] },
+        "He": ["гелий", "helium"], "Ne": ["неон", "neon"], "Ar": ["аргон", "argon"],
+        "Kr": ["криптон", "krypton"], "Xe": ["ксенон", "xenon"], "Rn": ["радон", "radon"],
         
         // Актиноиды
-        "U": { keywords: ["уран", "uranium", "уранил", "uo2", "uf6"] },
-        "Pu": { keywords: ["плутоний", "plutonium"] },
-        "Th": { keywords: ["торий", "thorium"] },
-        "Am": { keywords: ["америций", "americium"] },
-        "Cm": { keywords: ["кюрий", "curium"] },
-        "Np": { keywords: ["нептуний", "neptunium"] }
+        "U": ["уран", "uranium", "уранил", "uo2", "uf6", "оксид урана"],
+        "Pu": ["плутоний", "plutonium"], "Th": ["торий", "thorium"]
     };
 
-    // Функция определения элемента по тексту (взвешенная)
-    function detectElementByKeywords(text) {
+    // Паттерны для определения главного элемента в названии соединения
+    // Например: "пентахлорид фосфора" → фосфор, "оксид азота" → азот
+    function extractMainElementFromCompoundName(text) {
+        if (!text) return null;
+        const lower = text.toLowerCase();
+        
+        // Паттерн: "вещество элемент" (родительный падеж)
+        // Например: "хлорид натрия", "оксид фосфора", "сульфат калия"
+        const patterns = [
+            /(?:хлорид|фторид|бромид|иодид|оксид|сульфид|нитрид|карбид|гидрид|фосфид|силицид)\s+(\w+)(?:а|я|у|ом|е)?\b/gi,
+            /(?:сульфат|нитрат|карбонат|фосфат|хромат|перманганат|силикат|борат)\s+(\w+)(?:а|я|у|ом|е)?\b/gi,
+            /(?:пентахлорид|трихлорид|тетрахлорид|дихлорид|монохлорид)\s+(\w+)(?:а|я|у|ом|е)?\b/gi,
+            /(?:пентаоксид|триоксид|диоксид|монооксид)\s+(\w+)(?:а|я|у|ом|е)?\b/gi,
+            /(?:гидроксид)\s+(\w+)(?:а|я|у|ом|е)?\b/gi,
+            /(?:соль)\s+(\w+)(?:а|я|у|ом|е)?\b/gi,
+            /(?:кислота)\s+(\w+)(?:а|я|у|ом|е)?\b/gi
+        ];
+        
+        for (let pattern of patterns) {
+            const match = lower.match(pattern);
+            if (match && match[1]) {
+                const elementName = match[1].toLowerCase();
+                // Ищем элемент по названию
+                for (let [symbol, keywords] of Object.entries(CENTRAL_ELEMENT_KEYWORDS)) {
+                    for (let kw of keywords) {
+                        if (kw.toLowerCase() === elementName || elementName.includes(kw.toLowerCase()) || kw.toLowerCase().includes(elementName)) {
+                            if (kw.length > 3 || elementName.length > 3) return symbol;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    // Основная функция определения элемента
+    function detectMainElement(text) {
         if (!text || text.trim() === "") return "?";
+        
+        // Сначала пытаемся извлечь из названия соединения
+        let mainElement = extractMainElementFromCompoundName(text);
+        if (mainElement) return mainElement;
+        
         const lower = text.toLowerCase();
         let bestMatch = { symbol: "?", score: 0 };
         
-        for (let [symbol, data] of Object.entries(ELEMENTS_DB)) {
+        for (let [symbol, keywords] of Object.entries(CENTRAL_ELEMENT_KEYWORDS)) {
             let score = 0;
-            for (let kw of data.keywords) {
+            for (let kw of keywords) {
                 const kwLower = kw.toLowerCase();
                 if (lower.includes(kwLower)) {
-                    // Вес: длина + приоритет элемента
-                    let weight = kwLower.length + (data.priority || 50);
-                    // Особые случаи для устранения конфликтов
-                    if (kwLower === "pcl5" || kwLower === "фосфор пятихлористый") weight += 30;
-                    if (kwLower === "оксид азота" || kwLower === "no") weight += 25;
-                    if (kwLower === "аммиак") weight += 30;
-                    if (kwLower === "фосфин") weight += 30;
-                    if (kwLower === "хлорид" && symbol === "Cl") weight += 15;
+                    let weight = kwLower.length + 50;
+                    // Особые приоритеты
+                    if (kwLower === "пентахлорид фосфора" || kwLower === "pcl5") weight += 100;
+                    if (kwLower === "фосфор" || kwLower === "phosphorus") weight += 80;
+                    if (kwLower === "оксид азота" || kwLower === "no") weight += 80;
+                    if (kwLower === "аммиак" || kwLower === "nh3") weight += 80;
+                    if (kwLower === "фосфин" || kwLower === "ph3") weight += 80;
+                    if (kwLower === "натрий" || kwLower === "sodium") weight += 70;
+                    if (kwLower === "калий" || kwLower === "potassium") weight += 70;
+                    if (kwLower === "кальций" || kwLower === "calcium") weight += 70;
                     score += weight;
                 }
             }
-            // Бонус за формулу: если в тексте есть формула с символом
-            const formulaRegex = new RegExp(`\\b${symbol}[0-9]*\\b`, 'i');
-            if (formulaRegex.test(lower)) score += 20;
+            // Бонус за формулу с символом в начале (центральный атом)
+            const formulaRegex = new RegExp(`\\b${symbol}[0-9]*[a-z]?\\b`, 'i');
+            if (formulaRegex.test(lower)) score += 30;
             
             if (score > bestMatch.score) {
                 bestMatch.score = score;
@@ -270,7 +244,7 @@
             }
         }
         
-        return bestMatch.score >= 5 ? bestMatch.symbol : "?";
+        return bestMatch.score >= 10 ? bestMatch.symbol : "?";
     }
 
     // Глобальные переменные
@@ -380,7 +354,7 @@
         
         for (let i = 0; i < sheetData.length; i++) {
             let question = sheetData[i][targetQ] ? String(sheetData[i][targetQ]) : "";
-            let detected = detectElementByKeywords(question);
+            let detected = detectMainElement(question);
             let expected = (targetA >= 0 && sheetData[i][targetA]) ? String(sheetData[i][targetA]).trim() : "";
             
             if (expected && expected.length > 0) {
